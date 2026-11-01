@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CV minero con IA — Trabaja en Minería</title>
+  <meta name="description" content="Crea tu CV para minería o mejora el que tienes con inteligencia artificial. Gratis y sin registro: descarga en PDF, listo para postular.">
+  <meta name="theme-color" content="#0b0e12">
+  <link rel="canonical" href="https://trabajaenmineria.cl/cv.html">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+</head>
+<body class="cv-page">
+  <header class="top">
+    <div class="wrap top-inner">
+      <a class="brand" href="./" aria-label="Trabaja en Minería, inicio">
+        <img src="logo-mark.svg" width="36" height="36" alt="">
+        <span class="word">trabajaen<b>minería</b><i>.cl</i></span>
+      </a>
+      <nav class="nav">
+        <a href="./#ofertas">Ofertas</a>
+        <a href="cv.html" aria-current="page">CV con IA</a>
+        <a class="btn btn-sm" href="./#ofertas">Ver ofertas</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="cv-hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="wrap">
+      <span class="eyebrow"><span class="pulse"></span> Gratis y sin registro</span>
+      <h1>Tu CV minero, <span class="grad">listo para postular.</span></h1>
+      <p class="lead">Créalo desde cero o sube el que tienes y la IA lo mejora para el cargo que buscas. Descárgalo en Word o PDF. Tus datos personales nunca se envían a la IA.</p>
+      <div class="tabs" role="tablist" aria-label="Herramientas de CV">
+        <button role="tab" id="tab-crear" aria-controls="panel-crear" aria-selected="true">Crear mi CV</button>
+        <button role="tab" id="tab-mejorar" aria-controls="panel-mejorar" aria-selected="false">Mejorar mi CV con IA</button>
+      </div>
+    </div>
+  </section>
+
+  <main class="wrap cv-layout">
+    <div class="cv-tools">
+
+      <!-- Analizar y mejorar -->
+      <section class="panel" id="panel-mejorar" role="tabpanel" aria-labelledby="tab-mejorar" hidden>
+        <h2>1. Sube tu CV</h2>
+        <div class="privacy-box">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+          <p><b>Tus datos personales no se procesan.</b> Por privacidad, antes de usar la IA quitamos de tu CV tu nombre, RUT, teléfono, dirección y correo. No se envían ni se analizan. Los agregas tú al final, en el Word descargado.</p>
+        </div>
+        <label class="drop" id="drop">
+          <input type="file" id="file" accept=".pdf,.docx,.txt" hidden>
+          <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M4 16v4h16v-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <b id="drop-title">Arrastra tu CV aquí o haz clic para elegirlo</b>
+          <span id="drop-sub">PDF, Word (.docx) o texto</span>
+        </label>
+        <details class="paste">
+          <summary>O pega el texto de tu CV</summary>
+          <textarea id="cv-text" rows="8" placeholder="Pega aquí el contenido de tu CV…"></textarea>
+        </details>
+        <p class="redacted" id="redacted" hidden></p>
+      </section>
+
+      <!-- Opciones de IA (compartidas) -->
+      <section class="panel" id="ai-options">
+        <h2 id="ai-title">Mejora con IA</h2>
+        <label class="fld">Cargo al que postulas
+          <input id="ai-cargo" placeholder="Ej: Operador de CAEX, Mantenedor mecánico, Prevencionista">
+        </label>
+        <label class="fld">¿Qué quieres destacar o agregar?
+          <textarea id="ai-destacar" rows="3" placeholder="Ej: tengo licencia A4 desde 2021, lideré una cuadrilla de 6 personas, disponibilidad para turnos 7x7"></textarea>
+        </label>
+        <div class="chips chips-dark" id="ai-chips" aria-label="Ideas para destacar"></div>
+        <p class="hint">Escribe solo lo que de verdad tienes. Si pides algo que tu CV no respalda, la IA no lo inventa: te lo deja como pendiente para que lo confirmes.</p>
+        <label class="fld">Tono
+          <select id="ai-tono"><option value="profesional">Profesional</option><option value="directo y concreto">Directo y concreto</option><option value="cercano">Cercano</option></select>
+        </label>
+        <button class="btn btn-lg btn-block" id="ai-run" type="button">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z" fill="currentColor"/></svg>
+          <span id="ai-run-label">Mejorar mi CV con IA</span>
+        </button>
+        <p class="hint" id="ai-privacy">🔒 Tu nombre, RUT, teléfono, dirección y correo se quitan antes de enviar. Solo se envía tu experiencia, estudios y habilidades, que no guardamos.</p>
+        <div class="ai-status" id="ai-status" role="status" aria-live="polite"></div>
+      </section>
+
+      <!-- Resultado del análisis -->
+      <section class="panel result" id="result" hidden>
+        <div class="score-row">
+          <div class="score" id="score" style="--v:0"><span id="score-n">0</span><small>/100</small></div>
+          <div><h2>Diagnóstico de tu CV original</h2><p id="r-diag"></p></div>
+        </div>
+        <div class="r-grid">
+          <div><h3>Fortalezas</h3><ul id="r-fort" class="r-list ok"></ul></div>
+          <div><h3>Qué mejorar</h3><ul id="r-brechas" class="r-list warn"></ul></div>
+        </div>
+        <h3>Palabras clave que buscan los reclutadores</h3>
+        <div class="chips chips-dark" id="r-kw"></div>
+        <div class="pending" id="r-pend-box">
+          <h3>Antes de enviarlo, confirma o completa</h3>
+          <ul id="r-pend"></ul>
+        </div>
+        <p class="hint">Tu CV mejorado ya está en la vista previa. Revísalo y edítalo en <button type="button" class="link-btn" id="go-edit">Crear mi CV</button>.</p>
+      </section>
+
+      <!-- Creador -->
+      <section class="panel" id="panel-crear" role="tabpanel" aria-labelledby="tab-crear">
+        <div class="panel-head"><h2>Tus datos</h2><button type="button" class="link-btn" id="clear-cv">Borrar todo</button></div>
+        <div class="progress" aria-live="polite">
+          <div class="progress-top"><b id="progress-label">Tu CV está al 0 %</b><span class="saved-note" id="saved-note">Se guarda solo en este navegador</span></div>
+          <div class="progress-bar" role="progressbar" aria-labelledby="progress-label" aria-valuemin="0" aria-valuemax="100" id="progress-bar"><i id="progress-fill"></i></div>
+          <p class="progress-tip" id="progress-tip"></p>
+        </div>
+        <fieldset class="personal">
+          <legend>🔒 Datos personales <small>· quedan solo en tu equipo, nunca se envían a la IA</small></legend>
+          <div class="grid2">
+            <label class="fld">Nombre completo<input data-k="nombre" autocomplete="name"></label>
+            <label class="fld">RUT (opcional)<input data-k="rut" placeholder="12.345.678-9"></label>
+            <label class="fld">Teléfono<input data-k="telefono" type="tel" autocomplete="tel" placeholder="+56 9 …"></label>
+            <label class="fld">Correo<input data-k="email" type="email" autocomplete="email"></label>
+            <label class="fld">Dirección o ciudad<input data-k="ciudad" placeholder="Ej: Calama"></label>
+            <label class="fld">LinkedIn (opcional)<input data-k="linkedin"></label>
+          </div>
+        </fieldset>
+        <label class="fld">Cargo / titular<input data-k="titular" placeholder="Ej: Operador de CAEX · Licencia A4"></label>
+        <label class="fld">Perfil profesional<textarea data-k="perfil" rows="3" placeholder="Años de experiencia, especialidad, faenas y qué aportas."></textarea></label>
+
+        <div class="panel-head"><h3>Experiencia laboral</h3><button type="button" class="link-btn" data-add="experiencia">+ Agregar</button></div>
+        <div id="list-experiencia" class="repeat"></div>
+
+        <div class="panel-head"><h3>Estudios</h3><button type="button" class="link-btn" data-add="educacion">+ Agregar</button></div>
+        <div id="list-educacion" class="repeat"></div>
+
+        <label class="fld">Licencias, cursos y certificaciones <small>(uno por línea)</small>
+          <textarea data-k="certificaciones" data-lines rows="4" placeholder="Licencia municipal clase D&#10;Curso de trabajo en altura física&#10;Examen de altura geográfica vigente"></textarea>
+        </label>
+        <label class="fld">Habilidades <small>(una por línea)</small>
+          <textarea data-k="habilidades" data-lines rows="3" placeholder="Operación de CAEX Komatsu 930E&#10;Lectura de planos&#10;Trabajo en equipo"></textarea>
+        </label>
+        <label class="fld">Disponibilidad<input data-k="disponibilidad" placeholder="Ej: Turnos 7x7 y 4x3, traslado a faena"></label>
+      </section>
+
+      <div class="ad">
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="4444444444" data-ad-format="auto" data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+
+    <aside class="cv-preview">
+      <div class="preview-bar">
+        <span>Vista previa</span>
+        <div>
+          <button type="button" class="link-btn" id="print-cv">PDF</button>
+          <button type="button" class="link-btn" id="copy-cv">Copiar</button>
+          <button type="button" class="btn btn-sm" id="word-cv">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Descargar Word
+          </button>
+        </div>
+      </div>
+      <p class="hint word-hint" id="word-hint" hidden>En el Word, completa los campos resaltados en amarillo con tus datos personales antes de enviarlo.</p>
+      <article class="paper" id="cv-paper" aria-label="Vista previa del CV"></article>
+    </aside>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap foot-inner">
+      <div>
+        <a class="brand" href="./"><img src="logo-mark.svg" width="28" height="28" alt=""><span class="word">trabajaen<b>minería</b><i>.cl</i></span></a>
+        <p>Tu CV se guarda solo en tu navegador. No pedimos registro ni almacenamos tus datos.</p>
+      </div>
+      <p class="foot-links"><a href="./#ofertas">Ofertas</a><a href="privacidad.html">Privacidad y cookies</a></p>
+    </div>
+  </footer>
+
+  <!-- En celular: saltar entre el formulario y la vista previa -->
+  <button type="button" class="fab-preview" id="fab-preview">
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
+    <span id="fab-label">Ver mi CV</span>
+  </button>
+
+  <nav class="bottom-nav" aria-label="Navegación principal">
+    <a href="./#ofertas"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" fill="none" stroke="currentColor" stroke-width="2"/></svg>Ofertas</a>
+    <a href="./?buscar=1"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="m20 20-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Buscar</a>
+    <a href="./?guardados=1#ofertas"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Guardados</a>
+    <a href="cv.html" aria-current="page"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M7 3h7l5 5v13H7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M14 3v5h5M10 13h6M10 17h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>CV con IA</a>
+  </nav>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="config.js"></script>
+  <script src="privacy-filter.js"></script>
+  <script src="cv.js"></script>
+</body>
+</html>

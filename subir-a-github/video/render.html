@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Render del video explicativo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; background: #0b0e12; color: #eeebe5; font: 15px/1.5 Inter, system-ui, sans-serif; padding: 16px; }
+    canvas { width: 100%; max-width: 960px; display: block; border-radius: 12px; border: 1px solid #222; }
+    .bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 12px 0; max-width: 960px; }
+    input[type=range] { flex: 1; }
+    button { font: inherit; padding: 8px 14px; border-radius: 8px; border: 0; background: #d98a3d; color: #1a0f05; font-weight: 600; cursor: pointer; }
+    #log { white-space: pre-wrap; color: #98a2ad; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <canvas id="c" width="1280" height="720"></canvas>
+  <div class="bar">
+    <input id="scrub" type="range" min="0" max="1" step="0.01" value="0" aria-label="Tiempo">
+    <span id="time">0.0 s</span>
+    <button id="preview">▶ Vista previa</button>
+    <button id="render">Generar MP4</button>
+  </div>
+  <div id="log"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/mp4-muxer@5.1.3/build/mp4-muxer.js"></script>
+  <script src="scenes.js"></script>
+  <script>
+  // Guion: un clip de voz por escena (generados con IA en video/audio/sN.wav)
+  // Narrador: Rodrigo, operador CAEX de Calama (personaje ficticio), con habla chilena
+  const CAPTIONS = [
+    "Hola, soy el Rodrigo. Llevo quince años en faena allá en Calama: turnos de siete por siete, el polvo, la altura... y los camiones que no paran nunca.",
+    "Y sé lo difícil que es encontrar una buena pega, po. Por eso nació trabajaenmineria.cl.",
+    "Aquí tenís todas las ofertas mineras de Chile en un solo lugar: operadores, mantenedores, eléctricos, geólogos y prevencionistas.",
+    "Buscái por cargo o por región: Antofagasta, Atacama, Coquimbo... donde estís.",
+    "Elegís la oferta y postulái directo, al tiro. Sin registrarte y sin pagar ni uno. Y las ofertas se actualizan varias veces al día.",
+    "Sin cuentas y sin registro. Guardái las que te tinquen y las compartís por WhatsApp con tu cuadrilla.",
+    "Y si tu currículum necesita una manito, el analizador con inteligencia artificial te lo deja listo pa' la pega que buscái. Y tus datos personales no se tocan.",
+    "Trabaja en Minería. Tu próxima faena empieza aquí, compadre."
+  ];
+  const FPS = 30, SR = 48000;
+  // Velocidad de la voz: 1 = como se grabó; 0.85 = 15 % más lenta, sin cambiar el tono
+  const SPEECH_RATE = 0.85;
+  // Pausa entre escenas (segundos), para que cada idea alcance a entenderse
+  const SCENE_GAP = 1.0;
+  const cv = document.getElementById("c"), ctx = cv.getContext("2d");
+  const log = (m) => { document.getElementById("log").textContent += m + "\n"; console.log(m); };
+  let tl, voices;
+
+  async function init() {
+    await Promise.all(["700 40px Sora", "600 40px Sora", "500 40px Sora", "400 20px Inter", "500 20px Inter", "600 20px Inter"].map((f) => document.fonts.load(f)));
+    const ac = new AudioContext({ sampleRate: SR });
+    const raw = await Promise.all(CAPTIONS.map((_, i) => fetch(`audio/s${i + 1}.wav`).then((r) => r.arrayBuffer()).then((b) => ac.decodeAudioData(b))));
+    voices = SPEECH_RATE === 1 ? raw : raw.map((b) => timeStretch(ac, b, SPEECH_RATE));
+    tl = Explainer.buildTimeline(CAPTIONS, voices.map((v) => v.duration), { gap: SCENE_GAP });
+    tl.env = voiceEnvelope();
+    log(`Duración total: ${tl.duration.toFixed(2)} s`);
+    window.__tl = tl;
+    draw(0);
+  }
+  // Cambia la velocidad de la voz sin cambiar el tono (WSOLA: superpone tramos de 30 ms
+  // buscando en cada paso el punto que mejor empalma con el anterior, para que no se note el corte)
+  function timeStretch(ac, buffer, rate) {
+    const sr = buffer.sampleRate, N = Math.round(sr * 0.03), Hs = N >> 1, Ha = Hs * rate, tol = Math.round(sr * 0.012);
+    const win = new Float32Array(N).map((_, i) => 0.5 - 0.5 * Math.cos(2 * Math.PI * i / N));
+    const outLen = Math.ceil(buffer.length / rate) + N;
+    const out = ac.createBuffer(buffer.numberOfChannels, outLen, sr);
+    const x = buffer.getChannelData(0);
+    // 1) Elegir el inicio de cada tramo con el canal 0
+    const starts = [];
+    let prev = 0;
+    for (let k = 0; ; k++) {
+      const ideal = Math.round(k * Ha);
+      if (ideal + N + tol >= x.length) break;
+      let start = ideal;
+      if (k > 0) {
+        const target = prev + Hs; // continuación natural del tramo anterior
+        let best = -Infinity;
+        for (let d = -tol; d <= tol; d += 2) {
+          const s = ideal + d;
+          if (s < 0 || s + N >= x.length) continue;
+          let c = 0;
+          for (let i = 0; i < N; i += 4) c += x[s + i] * x[target + i];
+          if (c > best) { best = c; start = s; }
+        }
+      }
+      starts.push(start); prev = start;
+    }
+    // 2) Superponer los mismos tramos en todos los canales
+    for (let ch = 0; ch < buffer.numberOfChannels; ch++) {
+      const xi = buffer.getChannelData(ch), y = out.getChannelData(ch);
+      starts.forEach((s, k) => { const o = k * Hs; for (let i = 0; i < N; i++) y[o + i] += xi[s + i] * win[i]; });
+    }
+    return out;
+  }
+
+  // Volumen de la voz por cuadro (RMS suavizado), para mover la boca del minero
+  function voiceEnvelope() {
+    const n = Math.ceil(tl.duration * FPS), env = new Float32Array(n);
+    voices.forEach((v, k) => {
+      const data = v.getChannelData(0), sr = v.sampleRate, st = tl.scenes[k].audioStart;
+      for (let f = Math.floor(st * FPS); f < n; f++) {
+        const a = Math.floor((f / FPS - st) * sr), b = a + Math.floor(sr / FPS);
+        if (a >= data.length) break;
+        let sum = 0; for (let i = Math.max(0, a); i < Math.min(b, data.length); i++) sum += data[i] * data[i];
+        env[f] = Math.max(env[f], Math.sqrt(sum / (b - a)));
+      }
+    });
+    for (let f = 1; f < n; f++) env[f] = env[f] * .7 + env[f - 1] * .3;
+    // Normaliza: el pico de la voz queda en 0.2, así la boca se mueve igual con voces más fuertes o más suaves
+    let peak = 0; env.forEach((v) => { if (v > peak) peak = v; });
+    if (peak > 0) for (let f = 0; f < n; f++) env[f] *= 0.2 / peak;
+    return env;
+  }
+  function draw(t) {
+    Explainer.drawFrame(ctx, t, tl);
+    document.getElementById("time").textContent = t.toFixed(1) + " s";
+  }
+  document.getElementById("scrub").oninput = (e) => draw(e.target.value * tl.duration);
+
+  let previewing = false;
+  document.getElementById("preview").onclick = async () => {
+    if (previewing) return; previewing = true;
+    const ac = new AudioContext({ sampleRate: SR });
+    const buf = await mixAudio();
+    const src = ac.createBufferSource(); src.buffer = buf; src.connect(ac.destination);
+    const t0 = ac.currentTime + .1; src.start(t0);
+    const loop = () => { const t = ac.currentTime - t0; if (t > tl.duration) { previewing = false; return; } draw(Math.max(0, t)); requestAnimationFrame(loop); };
+    loop();
+  };
+
+  // Mezcla: voz + colchón sintetizado + impactos graves en la aparición del logo
+  async function mixAudio() {
+    const len = Math.ceil(tl.duration * SR);
+    const oc = new OfflineAudioContext(2, len, SR);
+    const comp = oc.createDynamicsCompressor(); comp.threshold.value = -16; comp.ratio.value = 3; comp.connect(oc.destination);
+    voices.forEach((v, i) => {
+      const s = oc.createBufferSource(); s.buffer = v;
+      const g = oc.createGain(); g.gain.value = 1.0; s.connect(g).connect(comp);
+      s.start(tl.scenes[i].audioStart);
+    });
+    // colchón (pad) en La menor con filtro que respira
+    const pad = oc.createGain(); const D = tl.duration;
+    pad.gain.setValueAtTime(0, 0); pad.gain.linearRampToValueAtTime(.05, 2.5); pad.gain.setValueAtTime(.05, D - 3); pad.gain.linearRampToValueAtTime(0, D);
+    const lp = oc.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 520; lp.Q.value = .7;
+    const lfo = oc.createOscillator(); lfo.frequency.value = .07; const lfoG = oc.createGain(); lfoG.gain.value = 220; lfo.connect(lfoG).connect(lp.frequency); lfo.start(0);
+    pad.connect(lp).connect(comp);
+    for (const f of [110, 164.81, 220, 261.63, 329.63]) for (const det of [-7, 7]) {
+      const o = oc.createOscillator(); o.type = "sawtooth"; o.frequency.value = f; o.detune.value = det;
+      const g = oc.createGain(); g.gain.value = f > 300 ? .08 : .16; o.connect(g).connect(pad); o.start(0);
+    }
+    // impactos
+    const s2 = tl.scenes[1], s7 = tl.scenes[tl.scenes.length - 1];
+    for (const at of [s2.start + (s2.end - s2.start) * .48, s7.start + .05]) {
+      const o = oc.createOscillator(); o.type = "sine"; o.frequency.setValueAtTime(70, at); o.frequency.exponentialRampToValueAtTime(38, at + 1.4);
+      const g = oc.createGain(); g.gain.setValueAtTime(0, at); g.gain.linearRampToValueAtTime(.45, at + .02); g.gain.exponentialRampToValueAtTime(.001, at + 1.8);
+      o.connect(g).connect(comp); o.start(at); o.stop(at + 2);
+    }
+    return oc.startRendering();
+  }
+
+  async function pickVideoCodec() {
+    for (const codec of ["avc1.640028", "avc1.4d0028", "avc1.42001f"]) {
+      const cfg = { codec, width: 1280, height: 720, bitrate: 1_400_000, bitrateMode: "variable", framerate: FPS, latencyMode: "quality" };
+      if ((await VideoEncoder.isConfigSupported(cfg)).supported) return cfg;
+    }
+    throw new Error("Este navegador no puede codificar H.264");
+  }
+  async function pickAudioCodec() {
+    for (const [codec, mux] of [["mp4a.40.2", "aac"], ["opus", "opus"]]) {
+      const cfg = { codec, sampleRate: SR, numberOfChannels: 2, bitrate: 128000 };
+      if ((await AudioEncoder.isConfigSupported(cfg)).supported) return [cfg, mux];
+    }
+    throw new Error("Sin códec de audio");
+  }
+
+  async function renderMp4() {
+    const vcfg = await pickVideoCodec(); const [acfg, amux] = await pickAudioCodec();
+    log(`Video ${vcfg.codec}, audio ${acfg.codec}`);
+    const muxer = new Mp4Muxer.Muxer({
+      target: new Mp4Muxer.ArrayBufferTarget(),
+      video: { codec: "avc", width: 1280, height: 720, frameRate: FPS },
+      audio: { codec: amux, numberOfChannels: 2, sampleRate: SR },
+      fastStart: "in-memory"
+    });
+    const venc = new VideoEncoder({ output: (c, m) => muxer.addVideoChunk(c, m), error: (e) => log("VideoEncoder: " + e) });
+    venc.configure(vcfg);
+    const frames = Math.ceil(tl.duration * FPS);
+    for (let i = 0; i < frames; i++) {
+      Explainer.drawFrame(ctx, i / FPS, tl);
+      const f = new VideoFrame(cv, { timestamp: Math.round(i * 1e6 / FPS), duration: Math.round(1e6 / FPS) });
+      venc.encode(f, { keyFrame: i % (FPS * 2) === 0 }); f.close();
+      while (venc.encodeQueueSize > 8) await new Promise((r) => setTimeout(r, 1));
+      if (i % 150 === 0) log(`cuadro ${i}/${frames}`);
+    }
+    await venc.flush();
+
+    const mix = await mixAudio();
+    const aenc = new AudioEncoder({ output: (c, m) => muxer.addAudioChunk(c, m), error: (e) => log("AudioEncoder: " + e) });
+    aenc.configure(acfg);
+    const L = mix.getChannelData(0), R = mix.getChannelData(1), N = 4800;
+    for (let o = 0; o < L.length; o += N) {
+      const n = Math.min(N, L.length - o), data = new Float32Array(n * 2);
+      data.set(L.subarray(o, o + n), 0); data.set(R.subarray(o, o + n), n);
+      const ad = new AudioData({ format: "f32-planar", sampleRate: SR, numberOfFrames: n, numberOfChannels: 2, timestamp: Math.round(o * 1e6 / SR), data });
+      aenc.encode(ad); ad.close();
+    }
+    await aenc.flush();
+    muxer.finalize();
+    const mp4 = new Blob([muxer.target.buffer], { type: "video/mp4" });
+    log(`MP4: ${(mp4.size / 1048576).toFixed(1)} MB`);
+    await upload("site/media/explicativo.mp4", mp4);
+
+    // Póster: Rodrigo en la faena al amanecer + marca arriba a la izquierda (el centro queda libre para el botón play)
+    Explainer.drawFrame(ctx, tl.scenes[0].start + (tl.scenes[0].end - tl.scenes[0].start) * .85, tl, { poster: true });
+    Explainer.drawMark(ctx, 116, 110, 88); Explainer.drawWordmark(ctx, 180, 110, 40);
+    const poster = await new Promise((r) => cv.toBlob(r, "image/jpeg", .86));
+    await upload("site/media/poster.jpg", poster);
+
+    // Subtítulos WebVTT
+    const fmt = (s) => new Date(s * 1000).toISOString().substr(11, 12);
+    const vtt = "WEBVTT\n\n" + tl.cues.map((c, i) => `${i + 1}\n${fmt(c.start)} --> ${fmt(c.end)}\n${c.text}\n`).join("\n");
+    await upload("site/media/explicativo.vtt", new Blob([vtt], { type: "text/vtt" }));
+    log("Listo ✔");
+    return { size: mp4.size, duration: tl.duration };
+  }
+  async function upload(path, blob) {
+    const r = await fetch("/upload?path=" + encodeURIComponent(path), { method: "POST", body: blob });
+    log(`${path}: ${r.status}`);
+    if (!r.ok) throw new Error("Falló la subida de " + path);
+  }
+  document.getElementById("render").onclick = () => renderMp4().catch((e) => log("Error: " + e.message));
+  window.renderMp4 = renderMp4;
+  window.__ready = init().catch((e) => log("Error: " + e.message));
+  </script>
+</body>
+</html>

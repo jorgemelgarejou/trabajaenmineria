@@ -1,0 +1,19 @@
+{
+  "name": "trabajaenmineria",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "netlify dev",
+    "worker:deploy": "wrangler deploy --config worker/wrangler.toml"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "latest",
+    "@netlify/blobs": "latest",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "latest",
+    "@netlify/functions": "latest",
+    "wrangler": "latest"
+  }
+}

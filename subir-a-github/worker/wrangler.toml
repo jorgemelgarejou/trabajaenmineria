@@ -1,0 +1,16 @@
+# Alternativa a Netlify. Desplegar desde la raíz del proyecto: npm run worker:deploy
+name = "cv-api"
+main = "src/index.ts"
+compatibility_date = "2026-10-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+ALLOWED_ORIGINS = "https://trabajaenmineria.cl,https://www.trabajaenmineria.cl,http://localhost:8765"
+MODEL = "claude-opus-5-5"
+DAILY_LIMIT = "200"
+PER_IP_LIMIT = "5"
+
+# Topes diarios: crea el KV con `npx wrangler kv namespace create RATE` y pega aquí el id
+# [[kv_namespaces]]
+# binding = "RATE"
+# id = "PEGA_AQUI_EL_ID"

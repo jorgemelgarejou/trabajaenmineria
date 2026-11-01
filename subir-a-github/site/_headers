@@ -1,0 +1,13 @@
+# Encabezados de Netlify (funciona con el repo conectado y con Netlify Drop)
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
+
+# El video y las imágenes casi no cambian: caché de 7 días
+/media/*
+  Cache-Control: public, max-age=604800
+
+# Las ofertas se actualizan cada 4 horas: caché corta
+/data/*
+  Cache-Control: public, max-age=300

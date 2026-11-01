@@ -1,0 +1,13 @@
+{
+  "_ayuda": "Agrega feeds RSS/Atom de portales o empresas que PERMITAN su reutilización. mining_only=true si el feed ya es solo de minería; si es false se filtra por palabras clave mineras.",
+  "feeds": [
+    {
+      "name": "Ejemplo (desactivado)",
+      "url": "https://ejemplo.cl/empleos/feed",
+      "company": "",
+      "location": "",
+      "mining_only": false,
+      "enabled": false
+    }
+  ]
+}

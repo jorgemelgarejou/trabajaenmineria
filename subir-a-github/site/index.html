@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Trabaja en Minería — Ofertas de empleo minero en Chile</title>
+  <meta name="description" content="Ofertas de trabajo en minería en Chile actualizadas cada 4 horas: operadores, mantención, ingeniería, geología y más en Antofagasta, Atacama, Coquimbo y todo el país.">
+  <meta name="theme-color" content="#0b0e12">
+  <link rel="canonical" href="https://trabajaenmineria.cl/">
+  <meta property="og:title" content="Trabaja en Minería — Empleos mineros en Chile">
+  <meta property="og:description" content="Todas las ofertas de trabajo en minería de Chile en un solo lugar.">
+  <meta property="og:url" content="https://trabajaenmineria.cl/">
+  <meta property="og:image" content="https://trabajaenmineria.cl/media/poster.jpg">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="alternate" type="application/rss+xml" title="Ofertas de Trabaja en Minería" href="feed.xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Google AdSense: reemplaza ca-pub-XXXXXXXXXXXXXXXX por tu ID de editor (ver README) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"WebSite","name":"Trabaja en Minería","url":"https://trabajaenmineria.cl/",
+   "potentialAction":{"@type":"SearchAction","target":"https://trabajaenmineria.cl/?q={q}","query-input":"required name=q"}}
+  </script>
+</head>
+<body>
+  <a class="skip" href="#ofertas">Ir a las ofertas</a>
+
+  <header class="top">
+    <div class="wrap top-inner">
+      <a class="brand" href="./" aria-label="Trabaja en Minería, inicio">
+        <img src="logo-mark.svg" width="36" height="36" alt="">
+        <span class="word">trabajaen<b>minería</b><i>.cl</i></span>
+      </a>
+      <nav class="nav">
+        <a href="#ofertas">Ofertas</a>
+        <a href="#como">Cómo funciona</a>
+        <a href="cv.html">CV con IA</a>
+        <button type="button" class="nav-saved" id="nav-saved" aria-pressed="false">
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4z" fill="currentColor"/></svg>
+          <span class="lbl">Guardados</span> <span class="badge" id="saved-count">0</span>
+        </button>
+        <a class="btn btn-sm" href="#ofertas">Ver ofertas</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="wrap hero-inner">
+      <span class="eyebrow"><span class="pulse"></span> Ofertas actualizadas cada 4 horas</span>
+      <h1>Tu próxima faena<br><span class="grad">empieza aquí.</span></h1>
+      <p class="lead">Todas las ofertas de minería de Chile en un solo lugar: faenas, contratistas y proveedores. Postula directo, sin registro y sin costo.</p>
+
+      <form class="search" id="search" role="search">
+        <label class="field field-q">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="m20 20-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <input id="q" type="search" placeholder="Cargo, empresa o palabra clave" aria-label="Buscar por cargo, empresa o palabra clave" autocomplete="off">
+          <kbd>/</kbd>
+        </label>
+        <label class="field field-r">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 21s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="9" r="2.5" fill="currentColor"/></svg>
+          <select id="region" aria-label="Región"><option value="">Todo Chile</option></select>
+        </label>
+        <button class="btn btn-lg" type="submit">Buscar empleos</button>
+      </form>
+
+      <div class="chips" id="chips" aria-label="Categorías"></div>
+
+      <dl class="stats">
+        <div><dt>Ofertas activas</dt><dd id="stat-jobs">—</dd></div>
+        <div><dt>Nuevas hoy</dt><dd id="stat-new">—</dd></div>
+        <div><dt>Actualización</dt><dd>cada 4 h</dd></div>
+        <div><dt>Costo para ti</dt><dd>$0</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="how" id="como">
+    <div class="wrap how-inner">
+      <div class="player" id="player">
+        <video id="video" preload="none" playsinline poster="media/poster.jpg">
+          <source src="media/explicativo.mp4" type="video/mp4">
+          <track kind="captions" src="media/explicativo.vtt" srclang="es" label="Español">
+        </video>
+        <button class="play" id="play" type="button" aria-label="Reproducir video: cómo funciona Trabaja en Minería">
+          <span class="play-btn"><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span>
+          <span class="play-label">Mira cómo funciona <small>1 min</small></span>
+        </button>
+      </div>
+      <div class="steps">
+        <span class="eyebrow eyebrow-dark">Cómo funciona</span>
+        <h2>Encuentra pega en minería en 3 pasos</h2>
+        <ol>
+          <li><b>Busca</b><span>Por cargo, empresa o región: Antofagasta, Atacama, Coquimbo y todo Chile.</span></li>
+          <li><b>Elige</b><span>Revisa turno, ubicación y sueldo. Guarda las que te interesan.</span></li>
+          <li><b>Postula</b><span>Directo en la fuente original. Sin registro y sin costo.</span></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <div class="ad ad-top">
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="1111111111" data-ad-format="auto" data-full-width-responsive="true"></ins>
+    </div>
+
+    <main class="layout" id="ofertas">
+      <section aria-labelledby="count">
+        <div class="toolbar">
+          <div>
+            <h2 id="count" aria-live="polite">Cargando ofertas…</h2>
+            <span class="updated" id="updated"></span>
+          </div>
+          <div class="toolbar-actions">
+            <select id="shift" aria-label="Filtrar por turno">
+              <option value="">Cualquier turno</option>
+              <option value="7x7">Turno 7x7</option>
+              <option value="4x3">Turno 4x3</option>
+              <option value="5x2">Turno 5x2</option>
+              <option value="10x10">Turno 10x10</option>
+              <option value="14x14">Turno 14x14</option>
+            </select>
+            <select id="sort" aria-label="Ordenar">
+              <option value="recent">Más recientes</option>
+              <option value="az">Cargo A–Z</option>
+            </select>
+          </div>
+        </div>
+        <div class="active-filters" id="active-filters" aria-label="Filtros activos"></div>
+        <ol class="jobs" id="jobs"></ol>
+        <button class="more" id="more" type="button" hidden>Ver más ofertas</button>
+      </section>
+
+      <aside class="side">
+        <div class="ad ad-side">
+          <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="2222222222" data-ad-format="auto" data-full-width-responsive="true"></ins>
+        </div>
+        <div class="card card-cta">
+          <h3>¿Tu CV está listo?</h3>
+          <p>Créalo o mejóralo con IA para el cargo que buscas. Gratis, sin registro y en PDF.</p>
+          <a class="btn" href="cv.html">Crear o mejorar mi CV</a>
+        </div>
+        <div class="card">
+          <h3>Comparte con tu cuadrilla</h3>
+          <p>Todas las ofertas mineras en un solo lugar, sin registro. Pásalo por WhatsApp.</p>
+          <button class="btn" type="button" id="share-site">Compartir por WhatsApp</button>
+          <button class="more share-li" type="button" id="share-site-li">Compartir en LinkedIn</button>
+        </div>
+        <div class="card">
+          <h3>Empleos por región</h3>
+          <ul class="links" id="region-links"></ul>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <footer class="foot">
+    <div class="wrap foot-inner">
+      <div>
+        <a class="brand" href="./"><img src="logo-mark.svg" width="28" height="28" alt=""><span class="word">trabajaen<b>minería</b><i>.cl</i></span></a>
+        <p>Reunimos ofertas de minería publicadas en portales de empleo de todo Chile. Sin registro: al postular vas directo a la fuente original. Nunca cobramos a los postulantes.</p>
+      </div>
+      <p class="foot-links"><a href="#ofertas">Ofertas</a><a href="cv.html">CV con IA</a><a href="privacidad.html">Privacidad y cookies</a><span>© <span id="year"></span> trabajaenmineria.cl</span></p>
+    </div>
+  </footer>
+
+  <button type="button" class="to-top" id="to-top" aria-label="Volver arriba" hidden>
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+
+  <!-- Navegación inferior en celular -->
+  <nav class="bottom-nav" aria-label="Navegación principal">
+    <a href="#ofertas" class="active"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" fill="none" stroke="currentColor" stroke-width="2"/></svg>Ofertas</a>
+    <button type="button" id="bn-search"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="m20 20-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Buscar</button>
+    <button type="button" id="bn-saved"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Guardados<span class="bn-badge" id="bn-saved-count" hidden></span></button>
+    <a href="cv.html"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M7 3h7l5 5v13H7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M14 3v5h5M10 13h6M10 17h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>CV con IA</a>
+  </nav>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

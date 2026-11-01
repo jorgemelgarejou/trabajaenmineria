@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://trabajaenmineria.cl/sitemap.xml

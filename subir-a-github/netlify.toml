@@ -1,0 +1,8 @@
+# Configuración para Netlify con el repo conectado: sitio estático en site/ + función de IA en /api/cv
+# (los encabezados de caché y seguridad están en site/_headers)
+[build]
+  publish = "site"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
