@@ -236,8 +236,13 @@ def from_career_sites():
             continue
         pattern = site.get("url_contains", "/job/")
         # Sirve para cualquier esquema de sitemap (sitemaps.org o el antiguo de Google que usa SuccessFactors)
-        urls = [html.unescape(el.text.strip()) for el in root.iter()
-                if el.tag.split("}")[-1] == "loc" and el.text and pattern in el.text]
+        # Dirección y fecha (lastmod) de cada oferta; la fecha sirve cuando la página no trae la de publicación
+        lastmod = {}
+        for entry in root:
+            fields = {el.tag.split("}")[-1]: (el.text or "").strip() for el in entry}
+            if pattern in fields.get("loc", ""):
+                lastmod[html.unescape(fields["loc"])] = fields.get("lastmod", "")
+        urls = list(lastmod)
         if site.get("chile_only"):
             # Portales con ofertas de todo el mundo: solo se abren las que en su dirección nombran una faena o ciudad de Chile
             urls = [u for u in urls if detect_region(urllib.parse.unquote(u)) or "chile" in norm(urllib.parse.unquote(u))]
@@ -245,7 +250,7 @@ def from_career_sites():
         for url in urls[: site.get("max_jobs", 60)]:
             time.sleep(1)
             try:
-                job = parse_career_site_job(http(url).decode("utf-8", "replace"), url, site)
+                job = parse_career_site_job(http(url).decode("utf-8", "replace"), url, site, lastmod.get(url, ""))
             except Exception as e:
                 print(f"  ! {url}: {e}", file=sys.stderr)
                 continue
@@ -282,7 +287,7 @@ def jsonld_job(page):
     return None
 
 
-def parse_jsonld_job(d, url, site):
+def parse_jsonld_job(d, url, site, lastmod=""):
     title = clean(d.get("title", ""))
     if not title:
         return None
@@ -307,14 +312,14 @@ def parse_jsonld_job(d, url, site):
         if len(first) < 90 and re.search(r"(?i)\b(ltda|s\.?a\.?|spa|minera|compa[nñ][ií]a)\b", first):
             company = first
     job = make_job(title, d.get("url") or url, company or site.get("company", ""), location, description, "",
-                   parse_date(d.get("datePosted") or "") or now, site["name"])
+                   parse_date(d.get("datePosted") or "") or parse_date(lastmod) or now, site["name"])
     return job
 
 
-def parse_career_site_job(page, url, site):
+def parse_career_site_job(page, url, site, lastmod=""):
     d = jsonld_job(page)
     if d:
-        return parse_jsonld_job(d, url, site)
+        return parse_jsonld_job(d, url, site, lastmod)
     m = re.search(r'property="og:title"\s+content="([^"]*)"', page)
     title = html.unescape(m.group(1)).strip() if m else ""
     if not title:
@@ -327,7 +332,7 @@ def parse_career_site_job(page, url, site):
     until = career_site_date(career_site_meta(page, "validThrough"))
     if until and until < now:
         return None  # postulación cerrada
-    posted = career_site_date(career_site_meta(page, "datePosted")) or now
+    posted = career_site_date(career_site_meta(page, "datePosted")) or parse_date(lastmod) or now
     start = page.find('class="jobdescription">')
     description = ""
     if start >= 0:
