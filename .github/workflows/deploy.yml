@@ -1,0 +1,67 @@
+name: Actualizar ofertas y publicar
+
+# Cada 4 horas recolecta ofertas y guarda site/data/jobs.json en el repo.
+# - Netlify (variable del repo HOSTING = netlify): Netlify ve el commit y publica solo.
+# - GitHub Pages (sin la variable): este mismo workflow publica en Pages.
+
+on:
+  schedule:
+    - cron: "0 */4 * * *"   # cada 4 horas
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: ofertas
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # En este repositorio el proyecto está dentro de la carpeta subir-a-github
+    defaults:
+      run:
+        working-directory: subir-a-github
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Recolectar ofertas
+        env:
+          JOOBLE_KEY: ${{ secrets.JOOBLE_KEY }}
+          CAREERJET_API_KEY: ${{ secrets.CAREERJET_API_KEY }}
+          # Dominio del sitio para los enlaces del feed RSS (variable del repo SITE_URL si usas otro)
+          SITE_URL: ${{ vars.SITE_URL || 'https://trabajaenmineria.cl' }}
+        run: python scripts/fetch_jobs.py
+      # Sin [skip ci] en el mensaje: Netlify debe publicar este commit.
+      # Los push hechos con el token de Actions no vuelven a disparar este workflow.
+      - name: Guardar jobs.json en el repo
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add site/data/jobs.json site/feed.xml
+          git diff --cached --quiet || git commit -m "Actualizar ofertas"
+          git push
+      - if: vars.HOSTING != 'netlify'
+        uses: actions/configure-pages@v5
+      - if: vars.HOSTING != 'netlify'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: subir-a-github/site
+
+  deploy:
+    needs: build
+    if: vars.HOSTING != 'netlify'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
