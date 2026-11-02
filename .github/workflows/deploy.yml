@@ -41,13 +41,24 @@ jobs:
         run: python scripts/fetch_jobs.py
       # Sin [skip ci] en el mensaje: Netlify debe publicar este commit.
       # Los push hechos con el token de Actions no vuelven a disparar este workflow.
+      # Si alguien subió cambios mientras corría, se reintenta sobre la versión más nueva.
       - name: Guardar jobs.json en el repo
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@users.noreply.github.com"
-          git add site/data/jobs.json site/feed.xml
-          git diff --cached --quiet || git commit -m "Actualizar ofertas"
-          git push
+          cp site/data/jobs.json site/feed.xml "$RUNNER_TEMP/"
+          for intento in 1 2 3; do
+            git fetch -q origin main
+            git reset -q --hard origin/main
+            cp "$RUNNER_TEMP/jobs.json" site/data/jobs.json
+            cp "$RUNNER_TEMP/feed.xml" site/feed.xml
+            git add site/data/jobs.json site/feed.xml
+            git diff --cached --quiet && exit 0
+            git commit -q -m "Actualizar ofertas"
+            git push && exit 0
+            sleep 10
+          done
+          exit 1
       - if: vars.HOSTING != 'netlify'
         uses: actions/configure-pages@v5
       - if: vars.HOSTING != 'netlify'
