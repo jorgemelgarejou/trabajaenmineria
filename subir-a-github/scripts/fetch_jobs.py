@@ -225,7 +225,6 @@ def from_career_sites():
     permitidas por su robots.txt, de a una por segundo. Cada oferta enlaza a su página original."""
     if not SOURCES.exists():
         return []
-    ns = "{http://www.sitemaps.org/schemas/sitemap/0.9}"
     jobs = []
     for site in json.loads(SOURCES.read_text(encoding="utf-8")).get("career_sites", []):
         if not site.get("enabled", True):
@@ -236,7 +235,9 @@ def from_career_sites():
             print(f"  ! {site['name']}: {e}", file=sys.stderr)
             continue
         pattern = site.get("url_contains", "/job/")
-        urls = [html.unescape(loc.text.strip()) for loc in root.iter(ns + "loc") if loc.text and pattern in loc.text]
+        # Sirve para cualquier esquema de sitemap (sitemaps.org o el antiguo de Google que usa SuccessFactors)
+        urls = [html.unescape(el.text.strip()) for el in root.iter()
+                if el.tag.split("}")[-1] == "loc" and el.text and pattern in el.text]
         if site.get("chile_only"):
             # Portales con ofertas de todo el mundo: solo se abren las que en su dirección nombran una faena o ciudad de Chile
             urls = [u for u in urls if detect_region(urllib.parse.unquote(u)) or "chile" in norm(urllib.parse.unquote(u))]
