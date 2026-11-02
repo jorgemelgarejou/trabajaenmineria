@@ -389,7 +389,14 @@ def main():
         jobs.append(j)
 
     jobs.sort(key=lambda j: j["date"], reverse=True)
-    jobs = jobs[:MAX_JOBS]  # las más recientes, para que la página cargue rápido en celular
+    # Tope de ofertas para que la página cargue rápido en celular. Las de portales directos
+    # (empresas, Portal Minero, APIs) nunca se recortan; el resto del cupo se llena con los feeds masivos.
+    bulk = set()
+    if SOURCES.exists():
+        bulk = {f["name"] for f in json.loads(SOURCES.read_text(encoding="utf-8")).get("feeds", [])}
+    direct = [j for j in jobs if j["source"] not in bulk]
+    jobs = direct + [j for j in jobs if j["source"] in bulk][: max(0, MAX_JOBS - len(direct))]
+    jobs.sort(key=lambda j: j["date"], reverse=True)
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps({"updated": datetime.now(timezone.utc).isoformat(), "count": len(jobs),
