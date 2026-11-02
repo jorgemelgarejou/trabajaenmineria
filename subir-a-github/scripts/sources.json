@@ -1,13 +1,48 @@
 {
-  "_ayuda": "Agrega feeds RSS/Atom de portales o empresas que PERMITAN su reutilización. mining_only=true si el feed ya es solo de minería; si es false se filtra por palabras clave mineras.",
+  "_ayuda": "feeds: RSS/Atom de portales que PERMITAN su reutilización (activa uno con enabled: true solo con autorización). career_sites: portales propios de empresas hechos con SAP SuccessFactors; se leen desde su sitemap.xml y solo páginas /job/ permitidas por su robots.txt.",
   "feeds": [
     {
-      "name": "Ejemplo (desactivado)",
-      "url": "https://ejemplo.cl/empleos/feed",
+      "name": "Chiletrabajos",
+      "url": "https://www.chiletrabajos.cl/rss.xml",
       "company": "",
       "location": "",
       "mining_only": false,
-      "enabled": false
+      "timeout": 180,
+      "enabled": true,
+      "_nota": "Activado a pedido del dueño del sitio. Los términos de Chiletrabajos piden consentimiento escrito para reutilizar su contenido: solicitarlo y, si lo niegan, cambiar enabled a false."
+    }
+  ],
+  "career_sites": [
+    {
+      "name": "Portal Minero",
+      "company": "",
+      "sitemap": "https://www.portalminero.com/sitemap-ofertas.xml",
+      "url_contains": "/oferta-laboral/",
+      "max_jobs": 120,
+      "enabled": true
+    },
+    {
+      "name": "Codelco",
+      "company": "Codelco",
+      "sitemap": "https://empleos.codelco.cl/sitemap.xml",
+      "max_jobs": 60,
+      "enabled": true
+    },
+    {
+      "name": "BHP",
+      "company": "BHP",
+      "sitemap": "https://careers.bhp.com/sitemap.xml",
+      "max_jobs": 200,
+      "chile_only": true,
+      "enabled": true
+    },
+    {
+      "name": "Teck",
+      "company": "Teck",
+      "sitemap": "https://jobs.teck.com/sitemap.xml",
+      "max_jobs": 200,
+      "chile_only": true,
+      "enabled": true
     }
   ]
 }
