@@ -63,6 +63,9 @@ h1, h2, h3 { font-family: var(--display); letter-spacing: -.02em; }
 .word i { font-style: normal; color: var(--muted); font-size: .85em; font-weight: 500; }
 .nav { display: flex; align-items: center; gap: 22px; font-size: .94rem; }
 .nav > a:not(.btn) { text-decoration: none; color: var(--muted); transition: color .15s; }
+.nav a, .nav button { white-space: nowrap; }
+/* Ventanas medianas: menos enlaces para que el menú no se parta en varias líneas */
+@media (max-width: 1000px) { .nav > a[href="#como"] { display: none; } .nav { gap: 16px; } }
 .nav > a:not(.btn):hover { color: var(--ink); }
 .nav-saved { display: inline-flex; align-items: center; gap: 6px; background: none; border: 1px solid var(--line-2); color: var(--muted); border-radius: 99px; padding: 6px 12px; font: inherit; font-size: .88rem; cursor: pointer; }
 .nav-saved[aria-pressed="true"] { color: var(--ink); border-color: var(--copper); background: rgba(217,138,61,.12); }
