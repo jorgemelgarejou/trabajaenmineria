@@ -143,7 +143,13 @@ La IA nunca inventa experiencia, fechas ni certificados: lo que no está respald
 
 **Descarga en Word:** el botón "Descargar Word" genera un `.docx` en el navegador. Los datos personales que la persona no haya escrito en el creador (ni se enviaron a la IA) quedan como campos resaltados en amarillo (`[Nombre completo]`, `[RUT]`, `[Teléfono]`, `[Correo]`, `[Dirección o ciudad]`) para completarlos a mano. También se puede descargar en PDF.
 
+### Corrector local (activo por defecto)
+
+Sin conectar ninguna IA, `site/cv-local.js` revisa y reestructura el CV en el navegador con criterios de reclutamiento minero: separa secciones, ordena la experiencia, reescribe funciones como logros con verbo en pasado, normaliza fechas y licencias, compara con las palabras clave de 11 familias de cargos y devuelve puntaje, fortalezas, brechas y pendientes en el mismo formato que la IA. No inventa datos: lo que falta queda como `[completar]`. Se controla en `site/config.js` con `cvMotor: "local"`.
+
 ### Activar la IA
+
+Cuando quieras usar Claude, cambia `cvMotor` a `"ia"` en `site/config.js`. Si la IA falla o no tiene clave, la página vuelve sola al corrector local.
 
 Necesitas una API key de console.anthropic.com (la API de IA se paga por uso; ver costos abajo). La clave queda en el servidor, nunca en la página.
 
