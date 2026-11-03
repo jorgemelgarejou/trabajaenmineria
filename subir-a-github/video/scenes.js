@@ -589,6 +589,55 @@
     }
   }
 
+  // ---------- Escena de guías y noticias ----------
+  function sceneGuias(ctx, p, t) {
+    darkBg(ctx, t, .7, .25);
+    const k = ease(seg(p, 0, .12));
+    ctx.save(); ctx.globalAlpha = k; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.font = font(600, 22, BODY); ctx.fillStyle = C.copper2; ctx.fillText("GUÍAS Y NOTICIAS", W / 2, 96);
+    ctx.font = font(700, 50, DISPLAY); ctx.fillStyle = C.ink; ctx.fillText("Postula informado", W / 2, 152 + 14 * (1 - k));
+    ctx.restore();
+
+    // Tres guías que aparecen cuando Rodrigo las nombra
+    const guides = [
+      ["turnos", "Turnos 7x7 y 4x3", "Cómo funcionan y qué preguntar", "cal"],
+      ["licencias", "Licencias que piden", "Clase D, A4, A5 y cursos", "lic"],
+      ["oferta falsa", "Ofertas falsas", "Nunca pagues por postular", "warn"],
+    ];
+    guides.forEach(([word, title, sub, icon], i) => {
+      const wp = wordP(7, word, .2 + i * .15), gk = ease(seg(p, wp - .04, wp + .05)); if (gk <= 0) return;
+      const x = 340, y = 214 + i * 104, w = 380, h = 86;
+      ctx.save(); ctx.globalAlpha = gk; ctx.translate(-26 * (1 - gk), 0);
+      rr(ctx, x, y, w, h, 16); ctx.fillStyle = C.surface; ctx.fill(); ctx.strokeStyle = "rgba(255,255,255,.09)"; ctx.lineWidth = 1.5; ctx.stroke();
+      // número de guía
+      rr(ctx, x + 18, y + 20, 46, 46, 12); ctx.fillStyle = icon === "warn" ? "rgba(243,180,106,.16)" : "rgba(217,138,61,.1)"; ctx.fill();
+      ctx.strokeStyle = C.copper2; ctx.lineWidth = 2.2; ctx.lineCap = "round"; ctx.lineJoin = "round";
+      const ix = x + 41, iy = y + 43;
+      if (icon === "cal") { rr(ctx, ix - 12, iy - 10, 24, 22, 4); ctx.stroke(); ctx.beginPath(); ctx.moveTo(ix - 12, iy - 3); ctx.lineTo(ix + 12, iy - 3); ctx.moveTo(ix - 6, iy - 14); ctx.lineTo(ix - 6, iy - 7); ctx.moveTo(ix + 6, iy - 14); ctx.lineTo(ix + 6, iy - 7); ctx.stroke(); }
+      else if (icon === "lic") { rr(ctx, ix - 14, iy - 10, 28, 20, 4); ctx.stroke(); ctx.beginPath(); ctx.arc(ix - 6, iy - 1, 4, 0, 7); ctx.moveTo(ix + 2, iy - 3); ctx.lineTo(ix + 9, iy - 3); ctx.moveTo(ix + 2, iy + 3); ctx.lineTo(ix + 9, iy + 3); ctx.stroke(); }
+      else { ctx.beginPath(); ctx.moveTo(ix, iy - 13); ctx.lineTo(ix + 13, iy + 10); ctx.lineTo(ix - 13, iy + 10); ctx.closePath(); ctx.stroke(); ctx.beginPath(); ctx.moveTo(ix, iy - 4); ctx.lineTo(ix, iy + 2); ctx.stroke(); ctx.fillStyle = C.copper2; ctx.beginPath(); ctx.arc(ix, iy + 6, 1.6, 0, 7); ctx.fill(); }
+      ctx.textBaseline = "middle";
+      ctx.fillStyle = C.ink; ctx.font = font(600, 22, DISPLAY); ctx.fillText(title, x + 84, y + 32);
+      ctx.fillStyle = C.muted; ctx.font = font(400, 16, BODY); ctx.fillText(sub, x + 84, y + 58);
+      ctx.restore();
+    });
+
+    // Noticias del rubro con su fuente: aparecen cuando dice "noticias"
+    const np = wordP(7, "noticias", .6);
+    const news = [["Se necesitarán 37 mil trabajadores al 2034", "REDIMIN · ago 2026"], ["Los cargos más demandados y cuánto pagan", "Meganoticias · ago 2026"], ["Mujeres ya son el 24 % de la gran minería", "Minería Chilena · jul 2026"]];
+    news.forEach(([title, src], i) => {
+      const nk = ease(seg(p, np - .03 + i * .05, np + .06 + i * .05)); if (nk <= 0) return;
+      const x = 760, y = 214 + i * 104, w = 410, h = 86;
+      ctx.save(); ctx.globalAlpha = nk; ctx.translate(26 * (1 - nk), 0);
+      rr(ctx, x, y, w, h, 16); ctx.fillStyle = "#f7f5f1"; ctx.fill();
+      ctx.fillStyle = C.copper3; ctx.font = font(600, 13, BODY); ctx.textBaseline = "middle"; ctx.fillText("NOTICIA", x + 20, y + 22);
+      ctx.fillStyle = "#12171d"; ctx.font = font(600, 17, BODY); ctx.fillText(title, x + 20, y + 46);
+      // fuente con enlace
+      ctx.fillStyle = "#5a636d"; ctx.font = font(500, 14, BODY); ctx.fillText("Fuente: " + src + "  ↗", x + 20, y + 68);
+      ctx.restore();
+    });
+  }
+
   function scene7(ctx, p, t) {
     darkBg(ctx, t, .5, .38);
     const g = ctx.createRadialGradient(W / 2, 250, 0, W / 2, 250, 420);
@@ -606,8 +655,8 @@
     ctx.restore();
   }
 
-  // scene7 es el cierre con la marca; sceneCV va justo antes
-  const SCENES = [scene1, scene2, scene3, scene4, scene5, scene6, sceneCV, scene7];
+  // scene7 es el cierre con la marca; antes van el analizador de CV y las guías
+  const SCENES = [scene1, scene2, scene3, scene4, scene5, scene6, sceneCV, sceneGuias, scene7];
 
   // ---------- Subtítulos ----------
   function chunks(text) {

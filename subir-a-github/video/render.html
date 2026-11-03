@@ -37,6 +37,7 @@
     "Elegís la oferta y postulái directo, al tiro. Sin registrarte y sin pagar ni uno. Y las ofertas se actualizan varias veces al día.",
     "Sin cuentas y sin registro. Guardái las que te tinquen y las compartís por WhatsApp con tu cuadrilla.",
     "Y si tu currículum necesita una manito, el analizador con inteligencia artificial te lo deja listo pa' la pega que buscái. Y tus datos personales no se tocan.",
+    "Y en la sección de guías te explicamos los turnos, las licencias que piden y cómo cachar una oferta falsa. Con noticias del rubro y sus fuentes, pa' que postulís con todo.",
     "Trabaja en Minería. Tu próxima faena empieza aquí, compadre."
   ];
   const FPS = 30, SR = 48000;
@@ -162,7 +163,8 @@
 
   async function pickVideoCodec() {
     for (const codec of ["avc1.640028", "avc1.4d0028", "avc1.42001f"]) {
-      const cfg = { codec, width: 1280, height: 720, bitrate: 1_400_000, bitrateMode: "variable", framerate: FPS, latencyMode: "quality" };
+      // ~0,8 Mbps: el MP4 queda bajo 10 MB (gráficos con poco movimiento, se ve igual de nítido)
+      const cfg = { codec, width: 1280, height: 720, bitrate: 800_000, bitrateMode: "variable", framerate: FPS, latencyMode: "quality" };
       if ((await VideoEncoder.isConfigSupported(cfg)).supported) return cfg;
     }
     throw new Error("Este navegador no puede codificar H.264");
