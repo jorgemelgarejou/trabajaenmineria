@@ -1,16 +1,17 @@
-// Espacios de publicidad (AdSense) y banner de Mirror, compartido por index.html y cv.html.
+// Espacios de publicidad (AdSense) y banner de Mirrow, compartido por index.html y cv.html.
 // Cada espacio tiene su lugar fijo en la página: si no hay anuncio, el espacio no se muestra.
 (function () {
   const cfg = window.TEM_CONFIG || {};
   const slots = cfg.adSlots || {};
   const client = /^ca-pub-\d{10,}$/.test(cfg.adClient || "") ? cfg.adClient : "";
-  // ?ver-anuncios muestra dónde irán los anuncios antes de tener AdSense aprobado
-  const preview = !client && new URLSearchParams(location.search).has("ver-anuncios");
+  // ?ver-anuncios muestra dónde irá cada anuncio (marcos de muestra en vez de anuncios reales)
+  const preview = new URLSearchParams(location.search).has("ver-anuncios");
   const root = document.documentElement;
-  root.classList.toggle("ads-on", !!client);
+  root.classList.toggle("ads-on", !!client && !preview);
   root.classList.toggle("ads-preview", preview);
 
-  if (client) {
+  // El <head> de cada página ya trae el script de AdSense (lo exige la verificación de Google)
+  if (client && !preview && !document.querySelector('script[src*="adsbygoogle.js"]')) {
     const s = document.createElement("script");
     s.async = true;
     s.crossOrigin = "anonymous";
@@ -43,7 +44,8 @@
   }
   document.querySelectorAll(".ad-slot").forEach(fill);
 
-  if (cfg.mirrorUrl) document.querySelectorAll("a[data-mirror]").forEach((a) => { a.href = cfg.mirrorUrl; });
+  if (cfg.mirrowUrl) document.querySelectorAll("a[data-mirrow]").forEach((a) => { a.href = cfg.mirrowUrl; });
 
-  window.TEM_ADS = { fill, enabled: !!client || preview };
+  // Anuncios entre ofertas solo si existe el bloque "listado" (o en la vista previa)
+  window.TEM_ADS = { fill, enabled: preview || (!!client && !!slots.listado) };
 })();
