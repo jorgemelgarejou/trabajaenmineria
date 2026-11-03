@@ -1,10 +1,11 @@
-// Creador y analizador de CV. El CV vive solo en este navegador (localStorage);
-// la IA se usa a través de la API (función de Netlify o Worker de Cloudflare), que no guarda nada.
+// Creador y analizador de CV. El CV vive solo en este navegador (localStorage).
+// Corrección: con cvMotor "local" la hace cv-local.js en el navegador (sin IA externa);
+// con "ia" usa la API (función de Netlify o Worker de Cloudflare con Claude), que no guarda nada.
 (function () {
-  // Dónde responde la IA: se define en config.js. Vacío = sitio sin IA (por ejemplo, Netlify Drop sin Worker).
+  // Dónde responde la IA: se define en config.js. Vacío = sin IA externa.
   const cfg = window.TEM_CONFIG || {};
   const API_URL = cfg.cvApiUrl === undefined ? "/api/cv" : cfg.cvApiUrl;
-  const NO_AI_MSG = "La mejora con IA no está disponible en este momento. Puedes crear tu CV aquí y descargarlo en Word o PDF.";
+  const USE_API = cfg.cvMotor === "ia" && !!API_URL;
   const STORE_KEY = "tem:cv";
   const IDEAS = ["Licencia A4 / clase D", "Liderazgo de equipos", "Seguridad y cero accidentes", "Turnos 7x7 / 4x3",
                  "Operación de CAEX", "Mantención predictiva", "Altura geográfica", "Inglés técnico"];
@@ -179,18 +180,23 @@
       payload.cv = PrivacyFilter.redactDeep(professional, filt);
     }
     const api = window.CV_API_URL || API_URL; // window.CV_API_URL permite apuntar a otro Worker (pruebas)
-    if (!api) { status(NO_AI_MSG, "err"); return; }
 
     const btn = $("ai-run");
     btn.disabled = true; btn.classList.add("loading");
-    status("Analizando tu CV… puede tardar hasta un minuto.", "");
+    status(USE_API ? "Analizando tu CV… puede tardar hasta un minuto." : "Revisando tu CV…", "");
     try {
-      const r = await fetch(api, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-      const data = await r.json().catch(() => ({}));
-      // 404/405 sin JSON: el sitio está publicado sin la función de IA (por ejemplo, en GitHub Pages)
-      if ((r.status === 404 || r.status === 405) && !data.error) throw new Error("La IA aún no está configurada en este sitio.");
-      if (r.status === 504) throw new Error("La IA tardó demasiado. Inténtalo de nuevo o acorta tu CV.");
-      if (!r.ok) throw new Error(data.error || "No pudimos procesar tu CV. Inténtalo de nuevo.");
+      let data;
+      if (USE_API) {
+        try { data = await callApi(api, payload); }
+        catch (e) {
+          // IA externa sin configurar o caída: la corrección local responde igual
+          if (!e.local) throw e;
+          data = window.CvLocal.analyze(payload);
+        }
+      } else {
+        await new Promise((ok) => setTimeout(ok, 500)); // deja ver el estado "Revisando…"
+        data = window.CvLocal.analyze(payload);
+      }
       showResult(data);
       // La IA no recibe ni devuelve datos personales: se conservan los que la persona escribió aquí
       const personal = {};
@@ -207,8 +213,25 @@
     }
   };
 
+  // Llama a la IA externa. Los errores marcados con .local permiten seguir con la corrección local.
+  async function callApi(api, payload) {
+    const fail = (msg, local) => Object.assign(new Error(msg), { local });
+    let r;
+    try { r = await fetch(api, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) }); }
+    catch (e) { throw fail("Sin conexión con la IA", true); }
+    const data = await r.json().catch(() => ({}));
+    // 404/405 sin JSON: el sitio está publicado sin la función de IA; 500/502/503: IA sin clave o caída
+    if ((r.status === 404 || r.status === 405) && !data.error) throw fail("IA no configurada", true);
+    if (r.status >= 500) throw fail(data.error || "IA no disponible", true);
+    if (!r.ok) throw fail(data.error || "No pudimos procesar tu CV. Inténtalo de nuevo.", false);
+    return data;
+  }
+
   function showResult(d) {
     $("result").hidden = false;
+    $("r-motor").textContent = d.motor === "local"
+      ? "Revisión automática con criterios de reclutamiento minero, hecha en tu navegador. Revisa el resultado y ajústalo con tus palabras."
+      : "Revisión hecha con IA. Revisa el resultado y ajústalo con tus palabras.";
     const n = Math.max(0, Math.min(100, Math.round(d.puntaje || 0)));
     $("score").style.setProperty("--v", n);
     $("score-n").textContent = n;
@@ -418,7 +441,7 @@
     return String(s || "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   }
 
-  if (!API_URL) status(NO_AI_MSG, "");
+  if (!USE_API) $("ai-privacy").textContent = "🔒 La revisión se hace en tu navegador: tu CV no se envía a ningún servidor. Igual quitamos tu nombre, RUT, teléfono, dirección y correo antes de analizarlo.";
   fillForm();
   renderPaper();
   renderProgress();

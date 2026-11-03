@@ -6,6 +6,9 @@ window.TEM_CONFIG = {
   jobsUrl: "data/jobs.json",
   // Dónde responde la IA del CV. Vacío = sin IA (el creador y las descargas Word/PDF siguen funcionando).
   cvApiUrl: "/api/cv",
+  // Corrector del CV: "local" = reglas de reclutamiento minero en el navegador (no usa la consola de Claude);
+  // "ia" = usa cvApiUrl con Claude (requiere ANTHROPIC_API_KEY en Netlify; si falla, vuelve a "local").
+  cvMotor: "local",
   // Tu ID de editor de AdSense (ca-pub-...). Vacío = los espacios de publicidad no se muestran.
   // Si lo cambias, cámbialo también en el <head> de index.html, cv.html y privacidad.html, y en ads.txt.
   adClient: "ca-pub-6612125908838011",
@@ -16,6 +19,7 @@ window.TEM_CONFIG = {
     listado: "",  // entre las ofertas, con el mismo formato de una oferta (In-feed)
     pie: "",      // al final del listado (horizontal)
     cv: "",       // página del CV
+    guias: "",    // página de guías y noticias
   },
   // Clave de diseño del anuncio In-feed (AdSense la entrega al crear el bloque "listado")
   adLayoutKey: "",
