@@ -31,13 +31,9 @@ Remove-Item (Join-Path $out "CNAME") -ErrorAction SilentlyContinue
 
 $jobsUrl = "data/jobs.json"
 if ($GitHubRepo) { $jobsUrl = "https://raw.githubusercontent.com/$GitHubRepo/$Branch/site/data/jobs.json" }
-$config = @"
-// Generado por scripts/build-netlify-drop.ps1 para Netlify Drop
-window.TEM_CONFIG = {
-  jobsUrl: "$jobsUrl",
-  cvApiUrl: "$CvApiUrl",
-};
-"@
+# Parte de site/config.js (AdSense, Mirror) y solo cambia de dónde salen las ofertas y la IA
+$config = [IO.File]::ReadAllText((Join-Path $src "config.js"))
+$config = $config -replace 'jobsUrl: "[^"]*"', "jobsUrl: `"$jobsUrl`"" -replace 'cvApiUrl: "[^"]*"', "cvApiUrl: `"$CvApiUrl`""
 [IO.File]::WriteAllText((Join-Path $out "config.js"), $config, (New-Object Text.UTF8Encoding $false))
 
 # Zip con rutas "/" (Compress-Archive de PowerShell 5.1 usa "\" y algunos servidores no lo entienden)
