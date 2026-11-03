@@ -144,12 +144,45 @@ kbd { font: 500 .75rem var(--font); border: 1px solid var(--line-2); border-radi
 .steps li b { font-family: var(--display); }
 .steps li span { color: var(--muted); font-size: .94rem; }
 
-/* ---------- Anuncios ---------- */
-.ad { margin: 24px 0; display: flex; align-items: center; justify-content: center; }
-.ad ins { width: 100%; }
-.ad-side { margin-top: 0; }
-ins.adsbygoogle[data-ad-status="unfilled"] { display: none !important; }
-.ad:has(ins[data-ad-status="unfilled"]) { margin: 8px 0; }
+/* ---------- Publicidad ----------
+   Cada anuncio vive en su propio marco con tamaño reservado (la página no salta al cargar)
+   y la etiqueta "Publicidad". Sin AdSense o sin anuncio disponible, el espacio no aparece. */
+.ad-slot { display: none; list-style: none; background: var(--bg-2); border: 1px solid var(--line); border-radius: var(--radius); padding: 8px 10px 10px; }
+.ad-slot.ad-ready { display: block; }
+.ad-slot:has(ins[data-ad-status="unfilled"]) { display: none; }
+.ad-label { display: block; font-size: .68rem; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); opacity: .75; margin: 0 2px 6px; }
+.ad-box { display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 8px; }
+.ad-box ins { width: 100%; }
+.ad-side .ad-box { min-height: 250px; }
+.ad-feed .ad-box { min-height: 120px; }
+.ad-wide { margin-top: 24px; }
+.ad-wide .ad-box { min-height: 90px; }
+/* Vista previa (?ver-anuncios): muestra dónde irá cada anuncio */
+.ads-preview .ad-box { border: 1px dashed var(--line-2); background: repeating-linear-gradient(135deg, transparent 0 10px, rgba(255,255,255,.015) 10px 20px); }
+.ads-preview .ad-box::after { content: "Espacio publicitario · " attr(data-size); color: var(--muted); font-size: .82rem; padding: 12px; text-align: center; }
+
+/* Banner de Mirror */
+.promo {
+  display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 18px; margin: 28px 0 8px; padding: 18px 22px;
+  text-decoration: none; color: var(--ink); border-radius: var(--radius); border: 1px solid rgba(140,190,255,.22);
+  background: radial-gradient(90% 160% at 0% 0%, rgba(120,170,255,.16), transparent 55%), radial-gradient(70% 140% at 100% 100%, rgba(217,138,61,.12), transparent 60%), var(--surface);
+  box-shadow: var(--shadow); transition: border-color .15s, transform .15s;
+}
+.promo:hover { border-color: rgba(140,190,255,.45); transform: translateY(-1px); }
+.promo-icon { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; color: #b9d3ff; background: rgba(120,170,255,.12); border: 1px solid rgba(140,190,255,.25); }
+.promo-text { display: grid; gap: 1px; min-width: 0; }
+.promo-text small { font-size: .7rem; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: #9fbfee; }
+.promo-text b { font-family: var(--display); font-size: 1.08rem; font-weight: 600; }
+.promo-text span { color: var(--muted); font-size: .92rem; }
+.promo-cta { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; font-weight: 600; font-size: .92rem; padding: 10px 16px; border-radius: var(--radius-sm); border: 1px solid rgba(140,190,255,.35); color: #dce8ff; transition: background .15s; }
+.promo:hover .promo-cta { background: rgba(120,170,255,.14); }
+.promo-compact { margin: 0; padding: 16px 18px; gap: 14px; }
+.promo-compact .promo-icon { width: 44px; height: 44px; border-radius: 12px; }
+@media (max-width: 600px) {
+  .promo { grid-template-columns: auto 1fr; padding: 16px; gap: 14px; }
+  .promo-icon { width: 44px; height: 44px; }
+  .promo-cta { grid-column: 1 / -1; justify-content: center; }
+}
 
 /* ---------- Listado ---------- */
 .layout { display: grid; grid-template-columns: 1fr 320px; gap: 28px; padding: 16px 0 56px; }
@@ -191,8 +224,6 @@ ins.adsbygoogle[data-ad-status="unfilled"] { display: none !important; }
 .icon-btn[aria-pressed="true"] { color: var(--copper-2); border-color: rgba(243,180,106,.5); background: rgba(217,138,61,.12); }
 .apply-row { grid-column: 3; grid-row: 3; align-self: end; position: relative; z-index: 1; }
 .apply-row .btn { padding: 8px 14px; font-size: .88rem; }
-.job-ad { display: block; background: transparent; border: 0; padding: 0; }
-.job-ad:hover { transform: none; box-shadow: none; }
 
 .tags { position: relative; z-index: 1; }
 button.tag { font: inherit; font-size: .76rem; background: transparent; cursor: pointer; }
@@ -256,7 +287,8 @@ button.tag-shift:hover { background: rgba(217,138,61,.12); }
 body[data-tab="crear"] #panel-crear { order: 1; }
 body[data-tab="crear"] #ai-options { order: 2; }
 body[data-tab="crear"] #result { order: 3; }
-body[data-tab="crear"] .cv-tools .ad { order: 4; }
+body[data-tab="crear"] .cv-tools .ad-slot { order: 4; }
+body[data-tab="crear"] .cv-tools .promo { order: 5; }
 .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; }
 .panel h2 { font-size: 1.15rem; margin: 0 0 14px; }
 .panel h3 { font-size: 1rem; margin: 0; }

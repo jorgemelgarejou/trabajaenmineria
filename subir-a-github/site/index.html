@@ -19,9 +19,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 
-  <!-- Google AdSense: reemplaza ca-pub-XXXXXXXXXXXXXXXX por tu ID de editor (ver README) -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
-
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"WebSite","name":"Trabaja en Minería","url":"https://trabajaenmineria.cl/",
    "potentialAction":{"@type":"SearchAction","target":"https://trabajaenmineria.cl/?q={q}","query-input":"required name=q"}}
@@ -105,9 +102,20 @@
   </section>
 
   <div class="wrap">
-    <div class="ad ad-top">
-      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="1111111111" data-ad-format="auto" data-full-width-responsive="true"></ins>
-    </div>
+    <!-- Banner de Mirror (el enlace se cambia en config.js > mirrorUrl) -->
+    <a class="promo" data-mirror href="https://www.mirror.cl" target="_blank" rel="noopener sponsored">
+      <span class="promo-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="26" height="26"><path d="M12 3v18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity=".5"/><path d="M10 6 5 12l5 6V6z" fill="currentColor"/><path d="m14 6 5 6-5 6V6z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      </span>
+      <span class="promo-text">
+        <small>Recomendado</small>
+        <b>Toma mejores decisiones con Mirror</b>
+        <span>Para empresas y personas.</span>
+      </span>
+      <span class="promo-cta">Conocer Mirror
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+    </a>
 
     <main class="layout" id="ofertas">
       <section aria-labelledby="count">
@@ -134,12 +142,11 @@
         <div class="active-filters" id="active-filters" aria-label="Filtros activos"></div>
         <ol class="jobs" id="jobs"></ol>
         <button class="more" id="more" type="button" hidden>Ver más ofertas</button>
+        <div class="ad-slot ad-wide" data-slot="pie"><span class="ad-label">Publicidad</span><div class="ad-box" data-size="728 × 90"></div></div>
       </section>
 
       <aside class="side">
-        <div class="ad ad-side">
-          <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="2222222222" data-ad-format="auto" data-full-width-responsive="true"></ins>
-        </div>
+        <div class="ad-slot ad-side" data-slot="lateral"><span class="ad-label">Publicidad</span><div class="ad-box" data-size="300 × 250"></div></div>
         <div class="card card-cta">
           <h3>¿Tu CV está listo?</h3>
           <p>Créalo o mejóralo con IA para el cargo que buscas. Gratis, sin registro y en PDF.</p>
@@ -183,6 +190,7 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="config.js"></script>
+  <script src="ads.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

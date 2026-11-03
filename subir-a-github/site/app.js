@@ -1,10 +1,9 @@
 // Front-end del agregador: lee data/jobs.json, filtra, guarda favoritos y pinta resultados con anuncios intercalados.
 (function () {
   const PAGE = 20;            // ofertas por página
-  const AD_EVERY = 6;         // un anuncio cada N ofertas
+  const AD_EVERY = 8;         // un anuncio cada N ofertas (AdSense se configura en config.js)
   const NEW_HOURS = 48;       // marca "Nuevo"
-  const AD_CLIENT = "ca-pub-XXXXXXXXXXXXXXXX";
-  const AD_SLOT_FEED = "3333333333";
+  const ads = window.TEM_ADS || { enabled: false, fill() {} };
   const SAVED_KEY = "tem:saved";
 
   const REGIONS = [
@@ -211,7 +210,7 @@
     const slice = filtered.slice(shown, shown + PAGE);
     slice.forEach((j, i) => {
       list.appendChild(jobItem(j, terms));
-      if ((shown + i + 1) % AD_EVERY === 0) list.appendChild(adItem());
+      if ((shown + i + 1) % AD_EVERY === 0 && ads.enabled) list.appendChild(adItem());
     });
     shown += slice.length;
     $("more").hidden = shown >= n;
@@ -338,18 +337,16 @@
       `<li><a href="?region=${encodeURIComponent(r)}">Empleos en ${esc(r)} <small>${counts[r] || ""}</small></a></li>`).join("");
   }
 
+  // Anuncio entre ofertas: espacio propio con el tamaño de una oferta y la etiqueta "Publicidad"
   function adItem() {
     const li = document.createElement("li");
-    li.className = "job job-ad";
-    li.innerHTML = `<ins class="adsbygoogle" style="display:block" data-ad-format="fluid" data-ad-layout-key="-fb+5w+4e-db+86" data-ad-client="${AD_CLIENT}" data-ad-slot="${AD_SLOT_FEED}"></ins>`;
-    queueMicrotask(pushAd);
+    li.className = "ad-slot ad-feed";
+    li.dataset.slot = "listado";
+    li.dataset.format = "fluid";
+    li.innerHTML = '<span class="ad-label">Publicidad</span><div class="ad-box" data-size="Anuncio entre ofertas"></div>';
+    queueMicrotask(() => ads.fill(li));
     return li;
   }
-  function pushAd() {
-    try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) { /* bloqueador o AdSense sin aprobar */ }
-  }
-  // Anuncios estáticos del HTML (superior y lateral)
-  document.querySelectorAll("ins.adsbygoogle").forEach(pushAd);
 
   // localStorage puede fallar (modo privado): los guardados quedan solo en memoria
   function readSaved() { try { return JSON.parse(localStorage.getItem(SAVED_KEY)) || []; } catch (e) { return []; } }

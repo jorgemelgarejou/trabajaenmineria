@@ -418,7 +418,6 @@
     return String(s || "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   }
 
-  try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) { /* bloqueador o AdSense sin aprobar */ }
   if (!API_URL) status(NO_AI_MSG, "");
   fillForm();
   renderPaper();

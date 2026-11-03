@@ -6,4 +6,18 @@ window.TEM_CONFIG = {
   jobsUrl: "data/jobs.json",
   // Dónde responde la IA del CV. Vacío = sin IA (el creador y las descargas Word/PDF siguen funcionando).
   cvApiUrl: "/api/cv",
+  // Tu ID de editor de AdSense (ca-pub-...). Vacío = los espacios de publicidad no se muestran.
+  adClient: "",
+  // ID de cada bloque de anuncios creado en AdSense (Anuncios > Por bloque de anuncios).
+  // Un espacio sin ID no se muestra. Para ver dónde irán: abre el sitio con ?ver-anuncios
+  adSlots: {
+    lateral: "",  // columna derecha de las ofertas (300×250)
+    listado: "",  // entre las ofertas, con el mismo formato de una oferta (In-feed)
+    pie: "",      // al final del listado (horizontal)
+    cv: "",       // página del CV
+  },
+  // Clave de diseño del anuncio In-feed (AdSense la entrega al crear el bloque "listado")
+  adLayoutKey: "",
+  // Enlace del banner de Mirror
+  mirrorUrl: "https://www.mirror.cl",
 };
