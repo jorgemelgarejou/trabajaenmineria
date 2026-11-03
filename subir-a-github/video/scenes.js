@@ -25,21 +25,20 @@
   function font(w, s, f = BODY) { return `${w} ${s}px "${f}"`; }
 
   // ---------- Elementos de marca ----------
-  const MARK_PTS = [[9, 27], [17, 27], [17, 35], [24, 35], [24, 43], [40, 43], [40, 35], [47, 35], [47, 27], [55, 27]];
+  // Logo: ícono tipo app en cobre con terrazas de rajo y sol en blanco (igual a site/logo-mark.svg)
+  const MARK_PTS = [[11.5, 30], [20, 30], [20, 37], [27, 37], [27, 44], [37, 44], [37, 37], [44, 37], [44, 30], [52.5, 30]];
   function drawMark(ctx, cx, cy, size, prog = 1, alpha = 1) {
     const s = size / 64, x0 = cx - size / 2, y0 = cy - size / 2;
     ctx.save(); ctx.globalAlpha *= alpha;
-    const bg = ctx.createLinearGradient(x0, y0, x0 + size, y0 + size);
-    bg.addColorStop(0, "#1c232b"); bg.addColorStop(1, "#0b0e12");
-    rr(ctx, x0, y0, size, size, 16 * s); ctx.fillStyle = bg; ctx.fill();
-    ctx.strokeStyle = "rgba(255,255,255,.1)"; ctx.lineWidth = 1.5 * s; ctx.stroke();
-    // sol / lámpara
+    const bg = ctx.createLinearGradient(x0, y0, x0, y0 + size);
+    bg.addColorStop(0, "#f4a261"); bg.addColorStop(1, "#c2571a");
+    rr(ctx, x0, y0, size, size, 14.5 * s); ctx.fillStyle = bg; ctx.fill();
+    const gl = ctx.createLinearGradient(x0, y0, x0, y0 + size);
+    gl.addColorStop(0, "rgba(255,255,255,.28)"); gl.addColorStop(.5, "rgba(255,255,255,0)");
+    ctx.fillStyle = gl; ctx.fill();
+    // sol naciente: aparece al final
     const sp = ease(seg(prog, .55, 1));
-    const sx = x0 + 46 * s, sy = y0 + 15 * s;
-    const sg = ctx.createRadialGradient(sx, sy, 0, sx, sy, 10 * s);
-    sg.addColorStop(0, `rgba(255,226,176,${sp})`); sg.addColorStop(.45, `rgba(243,180,106,${sp * .9})`); sg.addColorStop(1, "rgba(243,180,106,0)");
-    ctx.fillStyle = sg; ctx.beginPath(); ctx.arc(sx, sy, 10 * s, 0, 7); ctx.fill();
-    ctx.fillStyle = `rgba(255,233,196,${sp})`; ctx.beginPath(); ctx.arc(sx, sy, 4.2 * s, 0, 7); ctx.fill();
+    ctx.fillStyle = `rgba(255,255,255,${sp})`; ctx.beginPath(); ctx.arc(x0 + 45 * s, y0 + 18.5 * s, 5 * s * (.6 + .4 * sp), 0, 7); ctx.fill();
     // terrazas (se dibujan según prog)
     const lp = ease(seg(prog, 0, .7));
     const segs = []; let total = 0;
@@ -52,13 +51,13 @@
       ctx.lineTo(x0 + lerp(ax, bx, k) * s, y0 + lerp(ay, by, k) * s);
       left -= l;
     }
-    ctx.strokeStyle = copperGrad(ctx, x0, y0, x0 + size, y0 + size);
-    ctx.lineWidth = 4.2 * s; ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.stroke();
+    ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 4.6 * s; ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.stroke();
     ctx.restore();
   }
   function drawWordmark(ctx, x, y, size, alpha = 1, align = "left") {
     ctx.save(); ctx.globalAlpha *= alpha; ctx.textBaseline = "middle";
-    const parts = [["trabajaen", font(500, size, DISPLAY), C.ink], ["minería", font(700, size, DISPLAY), "grad"], [".cl", font(500, size * .82, DISPLAY), C.muted]];
+    const parts = [["trabajaen", font(500, size, DISPLAY), C.ink], ["minería", font(700, size, DISPLAY), "#f4a261"], [".cl", font(500, size * .82, DISPLAY), C.muted]];
     let total = 0; for (const [t, f] of parts) { ctx.font = f; total += ctx.measureText(t).width; }
     let cx = align === "center" ? x - total / 2 : x;
     for (const [t, f, col] of parts) {
