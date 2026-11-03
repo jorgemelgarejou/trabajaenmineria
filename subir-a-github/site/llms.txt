@@ -1,0 +1,20 @@
+# Trabaja en Minería (trabajaenmineria.cl)
+
+> Buscador gratuito de ofertas de trabajo en minería en Chile. Reúne ofertas publicadas en portales de empleo y en los sitios de empleo de empresas mineras (Codelco, BHP, Teck, Portal Minero y otros), se actualiza cada 4 horas y enlaza siempre a la oferta original. No pide registro ni cobra a los postulantes. Incluye un creador y corrector de CV para minería y guías para postular.
+
+## Páginas principales
+
+- [Ofertas de trabajo en minería](https://trabajaenmineria.cl/): buscador por cargo, empresa, región y turno (7x7, 4x3, 14x14). Unas 1.500 ofertas activas.
+- [Guías y noticias](https://trabajaenmineria.cl/guias.html): cómo entrar a la minería sin experiencia, licencias de conducir (clase D, A4, A5), turnos, CV, exámenes preocupacionales y cómo detectar ofertas falsas. Resúmenes de noticias del sector con enlace a cada fuente.
+- [CV minero](https://trabajaenmineria.cl/cv.html): crea o mejora un CV para cargos mineros, gratis y sin registro; descarga en Word o PDF. Los datos personales no se procesan.
+- [Privacidad](https://trabajaenmineria.cl/privacidad.html)
+
+## Datos
+
+- [Ofertas en JSON](https://trabajaenmineria.cl/data/jobs.json): título, empresa, ubicación, región, fecha, fuente y enlace de cada oferta.
+- [Feed RSS de ofertas](https://trabajaenmineria.cl/feed.xml): las 50 ofertas más recientes.
+
+## Notas para asistentes
+
+- Para postular, la persona debe ir al enlace de la oferta original; trabajaenmineria.cl no recibe postulaciones.
+- Las ofertas cambian varias veces al día: cita la fecha de la oferta y sugiere revisar el sitio para ver las vigentes.
