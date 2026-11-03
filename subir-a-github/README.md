@@ -127,7 +127,7 @@ python -m http.server 8000 -d site
 
 ## 4. Monetizar
 
-1. **Google AdSense**: con el sitio ya en `trabajaenmineria.cl` y algo de contenido, postula en adsense.google.com. Cuando te aprueben, todo se configura en `site/config.js`: pon tu ID en `adClient` y crea cuatro bloques de anuncio en AdSense para llenar `adSlots` (`lateral` 300×250, `listado` In-feed con su `adLayoutKey`, `pie` horizontal y `cv`). Pon también tu ID en `site/ads.txt` (allí va sin `ca-`). Cada anuncio tiene su espacio fijo con la etiqueta "Publicidad"; un espacio sin ID o sin anuncio no se muestra. Para ver dónde irán antes de la aprobación, abre `https://trabajaenmineria.cl/?ver-anuncios`. El banner de Mirror está en `index.html` y `cv.html`, y su enlace se cambia en `mirrorUrl`.
+1. **Google AdSense**: con el sitio ya en `trabajaenmineria.cl` y algo de contenido, postula en adsense.google.com. Cuando te aprueben, todo se configura en `site/config.js`: pon tu ID en `adClient` y crea cuatro bloques de anuncio en AdSense para llenar `adSlots` (`lateral` 300×250, `listado` In-feed con su `adLayoutKey`, `pie` horizontal y `cv`). Pon también tu ID en `site/ads.txt` (allí va sin `ca-`). Cada anuncio tiene su espacio fijo con la etiqueta "Publicidad"; un espacio sin ID o sin anuncio no se muestra. Para ver dónde irán antes de la aprobación, abre `https://trabajaenmineria.cl/?ver-anuncios`. El banner de Mirrow está en `index.html` y `cv.html`, y su enlace se cambia en `mirrowUrl`.
 2. **Afiliados**: Careerjet y Jooble pagan por los clics que envías a sus ofertas.
 
 ## 5. CV con IA (`site/cv.html`)
