@@ -98,8 +98,11 @@ Cada fuente es opcional. Las claves se guardan en **Settings → Secrets and var
 | Fuente | Cómo obtenerla | Secreto |
 |---|---|---|
 | **Jooble** | Pide una clave gratis en jooble.org/api/about | `JOOBLE_KEY` |
-| **Careerjet** | Regístrate como publisher en careerjet.cl (te pagan por clic) | `CAREERJET_AFFID` |
-| **Feeds RSS** | Agrega feeds en `scripts/sources.json` | — |
+| **Careerjet** | Crea una cuenta de publisher en careerjet.com y copia tu API key (pagan por clic; confirma con ellos que cubren Chile) | `CAREERJET_API_KEY` |
+| **Portales de mineras** | Ya activos: Codelco, BHP (solo Chile) y Teck (solo Chile). Se leen desde el `sitemap.xml` que publican, solo páginas de ofertas permitidas por su `robots.txt`, una por segundo. Para sumar otra empresa con portal SAP SuccessFactors, agrégala en `career_sites` de `scripts/sources.json` | — |
+| **Portal Minero** | Ya activo. Bolsa de empleo del sector minero; se lee desde su `sitemap-ofertas.xml` y los datos estándar (JSON-LD) de cada oferta. Su `robots.txt` lo permite | — |
+| **Chiletrabajos** | Ya activo. Se lee su feed RSS público (~30.000 ofertas) y se dejan solo las de minería. **Sus términos piden consentimiento escrito para reutilizar su contenido: solicítalo y, si lo niegan, pon `"enabled": false` en `scripts/sources.json`** | — |
+| **Feeds RSS** | Agrega otros feeds en `scripts/sources.json` (solo con autorización del sitio) | — |
 | **Manual** | Agrega ofertas en `site/data/manual.json` | — |
 
 Formato de `manual.json` (para ofertas públicas que encuentres, por ejemplo en la página de trabajo de una minera; `url` es donde se postula):
@@ -124,7 +127,7 @@ python -m http.server 8000 -d site
 
 ## 4. Monetizar
 
-1. **Google AdSense**: con el sitio ya en `trabajaenmineria.cl` y algo de contenido, postula en adsense.google.com. Cuando te aprueben, reemplaza `ca-pub-XXXXXXXXXXXXXXXX` por tu ID en `site/index.html`, `site/app.js` y `site/ads.txt` (allí va sin `ca-`), y crea tres bloques de anuncio (superior, lateral y "In-feed") para poner sus `data-ad-slot` en lugar de `1111111111`, `2222222222` y `3333333333`.
+1. **Google AdSense**: con el sitio ya en `trabajaenmineria.cl` y algo de contenido, postula en adsense.google.com. Cuando te aprueben, todo se configura en `site/config.js`: pon tu ID en `adClient` y crea cuatro bloques de anuncio en AdSense para llenar `adSlots` (`lateral` 300×250, `listado` In-feed con su `adLayoutKey`, `pie` horizontal y `cv`). Pon también tu ID en `site/ads.txt` (allí va sin `ca-`). Cada anuncio tiene su espacio fijo con la etiqueta "Publicidad"; un espacio sin ID o sin anuncio no se muestra. Para ver dónde irán antes de la aprobación, abre `https://trabajaenmineria.cl/?ver-anuncios`. El banner de Mirror está en `index.html` y `cv.html`, y su enlace se cambia en `mirrorUrl`.
 2. **Afiliados**: Careerjet y Jooble pagan por los clics que envías a sus ofertas.
 
 ## 5. CV con IA (`site/cv.html`)
