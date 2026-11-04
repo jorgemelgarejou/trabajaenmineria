@@ -4,6 +4,7 @@
   const AD_EVERY = 8;         // un anuncio cada N ofertas (AdSense se configura en config.js)
   const NEW_HOURS = 48;       // marca "Nuevo"
   const ads = window.TEM_ADS || { enabled: false, fill() {} };
+  const track = window.track || function () {}; // Google Analytics (definido en el <head>)
   const SAVED_KEY = "tem:saved";
 
   const REGIONS = [
@@ -268,9 +269,12 @@
       </div>
       <div class="apply-row"><a class="btn" href="${safeUrl(j.url)}" target="_blank" rel="noopener nofollow sponsored">Postular</a></div>`;
 
-    li.querySelector('[data-act="save"]').onclick = (e) => toggleSave(j, e.currentTarget);
-    li.querySelector('[data-act="share"]').onclick = () => share(j);
-    li.querySelector('[data-act="linkedin"]').onclick = () => shareLinkedIn(siteLink(j.title));
+    // Estadísticas (Google Analytics): cuántos postulan, guardan y comparten, por empresa y fuente
+    const info = { empresa: j.company || "", fuente: j.source || "", region: j.region || "" };
+    li.querySelectorAll('.apply-row a, h3 a').forEach((a) => a.addEventListener("click", () => track("postular", info)));
+    li.querySelector('[data-act="save"]').onclick = (e) => { toggleSave(j, e.currentTarget); track("guardar_oferta", info); };
+    li.querySelector('[data-act="share"]').onclick = () => { share(j); track("compartir_oferta", info); };
+    li.querySelector('[data-act="linkedin"]').onclick = () => { shareLinkedIn(siteLink(j.title)); track("compartir_linkedin", info); };
     const st = li.querySelector("[data-shift]");
     if (st) st.onclick = () => { $("shift").value = st.dataset.shift; apply(true); };
     return li;

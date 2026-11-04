@@ -6,6 +6,8 @@
   const cfg = window.TEM_CONFIG || {};
   const API_URL = cfg.cvApiUrl === undefined ? "/api/cv" : cfg.cvApiUrl;
   const USE_API = cfg.cvMotor === "ia" && !!API_URL;
+  // Google Analytics (definido en el <head>): solo eventos de uso, nunca el contenido del CV
+  const track = window.track || function () {};
   const STORE_KEY = "tem:cv";
   const IDEAS = ["Licencia A4 / clase D", "Liderazgo de equipos", "Seguridad y cero accidentes", "Turnos 7x7 / 4x3",
                  "Operación de CAEX", "Mantención predictiva", "Altura geográfica", "Inglés técnico"];
@@ -198,6 +200,7 @@
         data = window.CvLocal.analyze(payload);
       }
       showResult(data);
+      track("analizar_cv", { modo: tab, motor: data.motor || "ia", cargo: payload.cargo.slice(0, 60), puntaje: data.puntaje });
       // La IA no recibe ni devuelve datos personales: se conservan los que la persona escribió aquí
       const personal = {};
       PERSONAL_KEYS.forEach((k) => (personal[k] = cv[k] || ""));
@@ -332,6 +335,7 @@
       document.body.appendChild(a); a.click(); a.remove();
       setTimeout(() => URL.revokeObjectURL(a.href), 2000);
       toast("Word descargado");
+      track("descargar_cv", { formato: "word" });
     } catch (e) { toast("No se pudo generar el Word"); }
   };
 
@@ -403,6 +407,7 @@
   $("print-cv").onclick = () => {
     const prev = document.title;
     document.title = "CV " + (cv.nombre || "trabajaenmineria");
+    track("descargar_cv", { formato: "pdf" });
     window.print();
     document.title = prev;
   };
