@@ -8,10 +8,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <!-- Google AdSense (ID de editor; los espacios se configuran en config.js) -->
+  <!-- Consentimiento de cookies: todo parte rechazado hasta que la persona acepte (ver consent.js) -->
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("consent","default",{analytics_storage:"denied",ad_storage:"denied",ad_user_data:"denied",ad_personalization:"denied",wait_for_update:500});try{if(localStorage.getItem("tem:consent")==="si")gtag("consent","update",{analytics_storage:"granted",ad_storage:"granted",ad_user_data:"granted",ad_personalization:"granted"});}catch(e){}</script>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6612125908838011" crossorigin="anonymous"></script>
   <!-- Google Analytics 4: visitas, origen, región y uso (postular, guardar, CV). Nunca el contenido del CV -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-KFSJVX6SV7"></script>
-  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","G-KFSJVX6SV7");window.track=function(n,p){gtag("event",n,p||{});};</script>
+  <script>gtag("js",new Date());gtag("config","G-KFSJVX6SV7");window.track=function(n,p){gtag("event",n,p||{});};</script>
 </head>
 <body>
   <header class="top"><div class="wrap top-inner"><a class="brand" href="./"><img src="logo-mark.svg" width="36" height="36" alt=""><span class="word">trabajaen<b>minería</b><i>.cl</i></span></a><nav class="nav"><a href="guias.html">Guías</a><a href="./#ofertas">Ver ofertas</a></nav></div></header>
@@ -26,6 +28,9 @@
     <p>El CV que creas se guarda únicamente en tu navegador (almacenamiento local) y puedes borrarlo cuando quieras con el botón “Borrar todo”. La revisión y mejora del CV se hace <b>en tu propio navegador</b>: tu CV no se envía a ningún servidor. Aun así, por privacidad, antes de analizarlo la página quita tu nombre, RUT, teléfono, dirección, correo, LinkedIn, fecha de nacimiento, estado civil y nacionalidad. Tus datos personales los agregas tú en el documento Word descargado.</p>
     <p>Si en el futuro activamos una mejora con inteligencia artificial externa (Anthropic), solo se enviaría tu experiencia, estudios, cursos y habilidades, ya sin datos personales y sin guardarlos, y lo indicaremos en esta página.</p>
 
+    <h2 id="cookies">Cookies y tu consentimiento</h2>
+    <p>Las cookies de estadísticas (Google Analytics) y de publicidad (Google AdSense) solo se activan si las aceptas en el aviso que aparece al entrar. Si las rechazas, el sitio funciona igual: Google solo recibe señales técnicas sin cookies para contar visitas de forma agregada, y los anuncios que veas no serán personalizados. Puedes cambiar tu decisión cuando quieras con el enlace <a href="#" data-cookies>Preferencias de cookies</a> al pie de cada página. Tu elección se guarda solo en tu navegador.</p>
+
     <h2>Estadísticas de visitas</h2>
     <p>Usamos Google Analytics para saber cuántas personas visitan el sitio, desde qué región y dispositivo llegan, y qué secciones usan (por ejemplo, cuántas veces se hace clic en "Postular" o se descarga un CV). Google Analytics usa cookies y entrega datos agregados y anónimos; no recibe tu nombre, RUT, teléfono, correo ni el contenido de tu CV. Puedes bloquearlo con el <a href="https://tools.google.com/dlpage/gaoptout" rel="noopener">complemento de inhabilitación de Google Analytics</a> o con un bloqueador de anuncios.</p>
 
@@ -38,6 +43,7 @@
     <h2>Tus derechos</h2>
     <p>Conforme a la Ley N.º 19.628 sobre protección de la vida privada y la Ley N.º 21.719, puedes escribirnos para cualquier consulta sobre tus datos a <a href="mailto:contacto@trabajaenmineria.cl">contacto@trabajaenmineria.cl</a>.</p>
   </main>
-  <footer class="foot"><div class="wrap"><p><a href="/">Volver a las ofertas</a></p></div></footer>
+  <footer class="foot"><div class="wrap"><p><a href="/">Volver a las ofertas</a> · <a href="#" data-cookies>Preferencias de cookies</a></p></div></footer>
+  <script src="consent.js"></script>
 </body>
 </html>

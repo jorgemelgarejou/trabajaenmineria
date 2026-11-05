@@ -25,10 +25,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <!-- Google AdSense (ID de editor; los espacios se configuran en config.js) -->
+  <!-- Consentimiento de cookies: todo parte rechazado hasta que la persona acepte (ver consent.js) -->
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("consent","default",{analytics_storage:"denied",ad_storage:"denied",ad_user_data:"denied",ad_personalization:"denied",wait_for_update:500});try{if(localStorage.getItem("tem:consent")==="si")gtag("consent","update",{analytics_storage:"granted",ad_storage:"granted",ad_user_data:"granted",ad_personalization:"granted"});}catch(e){}</script>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6612125908838011" crossorigin="anonymous"></script>
   <!-- Google Analytics 4: visitas, origen, región y uso (postular, guardar, CV). Nunca el contenido del CV -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-KFSJVX6SV7"></script>
-  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","G-KFSJVX6SV7");window.track=function(n,p){gtag("event",n,p||{});};</script>
+  <script>gtag("js",new Date());gtag("config","G-KFSJVX6SV7");window.track=function(n,p){gtag("event",n,p||{});};</script>
 
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"WebSite","name":"Trabaja en Minería","url":"https://trabajaenmineria.cl/",
@@ -189,7 +191,7 @@
         <a class="brand" href="./"><img src="logo-mark.svg" width="28" height="28" alt=""><span class="word">trabajaen<b>minería</b><i>.cl</i></span></a>
         <p>Reunimos ofertas de minería publicadas en portales de empleo de todo Chile. Sin registro: al postular vas directo a la fuente original. Nunca cobramos a los postulantes.</p>
       </div>
-      <p class="foot-links"><a href="#ofertas">Ofertas</a><a href="guias.html">Guías</a><a href="cv.html">CV con IA</a><a href="privacidad.html">Privacidad y cookies</a><span>© <span id="year"></span> trabajaenmineria.cl</span></p>
+      <p class="foot-links"><a href="#ofertas">Ofertas</a><a href="guias.html">Guías</a><a href="cv.html">CV con IA</a><a href="privacidad.html">Privacidad y cookies</a><a href="#" data-cookies>Preferencias de cookies</a><span>© <span id="year"></span> trabajaenmineria.cl</span></p>
     </div>
   </footer>
 
@@ -210,5 +212,6 @@
   <script src="config.js"></script>
   <script src="ads.js"></script>
   <script src="app.js"></script>
+  <script src="consent.js"></script>
 </body>
 </html>

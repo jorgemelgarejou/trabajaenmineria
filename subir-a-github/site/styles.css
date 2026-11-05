@@ -338,6 +338,28 @@ button.tag-shift:hover { background: var(--accent-line); }
 }
 .toast.show { opacity: 1; translate: -50% 0; }
 
+/* Aviso de cookies: tarjeta flotante abajo; "Rechazar" y "Aceptar" con el mismo peso */
+.cookie-bar {
+  position: fixed; left: 50%; bottom: 20px; translate: -50% 0; z-index: 45; width: calc(100% - 32px); max-width: 620px;
+  display: flex; align-items: center; gap: 16px; padding: 16px 18px; border-radius: var(--radius);
+  background: var(--surface); border: 1px solid var(--line-2); box-shadow: var(--shadow-lg);
+  animation: cookie-in .35s ease;
+}
+@keyframes cookie-in { from { translate: -50% 24px; } }
+.cookie-bar p { margin: 0; font-size: .86rem; color: var(--ink-2); line-height: 1.45; }
+.cookie-bar b { color: var(--ink); }
+.cookie-bar a { color: var(--accent-ink); }
+.cookie-actions { display: flex; gap: 8px; flex: none; }
+.cookie-actions .btn, .cookie-actions .more { margin: 0; min-width: 100px; padding: 9px 18px; font-size: .88rem; }
+@media (max-width: 600px) {
+  .cookie-bar { flex-direction: column; align-items: stretch; gap: 12px; }
+  .cookie-actions > * { flex: 1; }
+}
+@media (max-width: 720px) {
+  .cookie-bar { bottom: calc(76px + env(safe-area-inset-bottom)); }
+}
+@media print { .cookie-bar { display: none !important; } }
+
 /* ---------- CV con IA ---------- */
 .cv-hero { position: relative; overflow: hidden; padding: 64px 0 28px; text-align: center; }
 .cv-hero .wrap { display: flex; flex-direction: column; align-items: center; }
