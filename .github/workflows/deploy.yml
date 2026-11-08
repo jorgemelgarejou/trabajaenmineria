@@ -59,6 +59,13 @@ jobs:
             sleep 10
           done
           exit 1
+      # Páginas para Google: una por oferta (con datos de Google Empleos), por región y por cargo,
+      # y el sitemap. Se generan solo para la publicación: no se guardan en el repo.
+      - name: Generar páginas de ofertas, regiones y cargos
+        if: vars.HOSTING != 'netlify'
+        env:
+          SITE_URL: ${{ vars.SITE_URL || 'https://trabajaenmineria.cl' }}
+        run: node scripts/build_pages.mjs
       - if: vars.HOSTING != 'netlify'
         uses: actions/configure-pages@v5
       - if: vars.HOSTING != 'netlify'
