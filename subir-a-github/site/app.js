@@ -249,7 +249,9 @@
     const isSaved = saved.has(j._id);
     li.innerHTML = `
       <div class="avatar" aria-hidden="true">${esc(initial)}</div>
-      <h3><a href="${safeUrl(j.url)}" target="_blank" rel="noopener nofollow sponsored">${highlight(j.title, terms)}</a></h3>
+      <h3>${j.page
+        ? `<a href="${esc(j.page)}">${highlight(j.title, terms)}</a>`
+        : `<a href="${safeUrl(j.url)}" target="_blank" rel="noopener nofollow sponsored">${highlight(j.title, terms)}</a>`}</h3>
       <div class="actions">
         <button type="button" class="icon-btn" data-act="save" aria-pressed="${isSaved}" aria-label="${isSaved ? "Quitar de guardados" : "Guardar oferta"}">${isSaved ? ICON.saved : ICON.save}</button>
         <button type="button" class="icon-btn" data-act="linkedin" aria-label="Compartir en LinkedIn">${ICON.linkedin}</button>
@@ -271,10 +273,10 @@
 
     // Estadísticas (Google Analytics): cuántos postulan, guardan y comparten, por empresa y fuente
     const info = { empresa: j.company || "", fuente: j.source || "", region: j.region || "" };
-    li.querySelectorAll('.apply-row a, h3 a').forEach((a) => a.addEventListener("click", () => track("postular", info)));
+    li.querySelectorAll(j.page ? '.apply-row a' : '.apply-row a, h3 a').forEach((a) => a.addEventListener("click", () => track("postular", info)));
     li.querySelector('[data-act="save"]').onclick = (e) => { toggleSave(j, e.currentTarget); track("guardar_oferta", info); };
     li.querySelector('[data-act="share"]').onclick = () => { share(j); track("compartir_oferta", info); };
-    li.querySelector('[data-act="linkedin"]').onclick = () => { shareLinkedIn(siteLink(j.title)); track("compartir_linkedin", info); };
+    li.querySelector('[data-act="linkedin"]').onclick = () => { shareLinkedIn(j.page ? location.origin + j.page : siteLink(j.title)); track("compartir_linkedin", info); };
     const st = li.querySelector("[data-shift]");
     if (st) st.onclick = () => { $("shift").value = st.dataset.shift; apply(true); };
     return li;
@@ -317,10 +319,11 @@
 
   function share(j) {
     const text = `${j.title}${j.company ? " – " + j.company : ""}${j.location ? " (" + j.location + ")" : ""}`;
+    const url = j.page ? location.origin + j.page : j.url; // la página de la oferta en este sitio, si existe
     if (navigator.share) {
-      navigator.share({ title: j.title, text, url: j.url }).catch(() => {});
+      navigator.share({ title: j.title, text, url }).catch(() => {});
     } else {
-      window.open("https://wa.me/?text=" + encodeURIComponent(`${text}\n${j.url}\nVía trabajaenmineria.cl`), "_blank", "noopener");
+      window.open("https://wa.me/?text=" + encodeURIComponent(`${text}\n${url}\nVía trabajaenmineria.cl`), "_blank", "noopener");
     }
   }
 
@@ -337,8 +340,12 @@
   function renderRegionLinks() {
     const counts = {};
     all.forEach((j) => { if (j.region) counts[j.region] = (counts[j.region] || 0) + 1; });
-    $("region-links").innerHTML = REGIONS.map((r) =>
-      `<li><a href="?region=${encodeURIComponent(r)}">Empleos en ${esc(r)} <small>${counts[r] || ""}</small></a></li>`).join("");
+    // Con páginas generadas (sitio publicado) enlaza a /empleos/<region>; si no, filtra aquí mismo
+    const pages = all.some((j) => j.page);
+    const slug = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+    $("region-links").innerHTML = REGIONS.filter((r) => !pages || (counts[r] || 0) >= 3).map((r) =>
+      `<li><a href="${pages ? "/empleos/" + slug(r) : "?region=" + encodeURIComponent(r)}">Empleos en ${esc(r)} <small>${counts[r] || ""}</small></a></li>`).join("") +
+      (pages ? '<li><a href="/empleos/">Todas las regiones y cargos <small>›</small></a></li>' : "");
   }
 
   // Anuncio entre ofertas: espacio propio con el tamaño de una oferta y la etiqueta "Publicidad"
