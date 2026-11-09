@@ -1,12 +1,14 @@
 name: Actualizar ofertas y publicar
 
-# Cada 4 horas recolecta ofertas y guarda site/data/jobs.json en el repo.
+# Cada 2 horas recolecta ofertas y guarda site/data/jobs.json en el repo.
 # - Netlify (variable del repo HOSTING = netlify): Netlify ve el commit y publica solo.
 # - GitHub Pages (sin la variable): este mismo workflow publica en Pages.
 
 on:
   schedule:
-    - cron: "0 */4 * * *"   # cada 4 horas
+    # Cada 2 horas, en el minuto 17: GitHub omite a veces las ejecuciones de la hora en punto
+    # (más carga) y, si una falla, la siguiente llega pronto.
+    - cron: "17 */2 * * *"
   push:
     branches: [main]
   workflow_dispatch:
