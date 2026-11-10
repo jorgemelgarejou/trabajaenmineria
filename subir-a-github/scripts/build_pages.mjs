@@ -254,7 +254,7 @@ ${ld.map((o) => `  <script type="application/ld+json">${jsonLd(o)}</script>`).jo
       <nav class="nav">
         <a href="/#ofertas">Ofertas</a>
         <a href="/empleos/">Por región y cargo</a>
-        <a href="/guias.html">Guías</a>
+        <a href="/recursos/">Recursos</a>
         <a href="/cv.html">CV con IA</a>
         <a href="/empresas.html">Empresas</a>
         <a class="btn btn-sm" href="/#ofertas">Buscar ofertas</a>
@@ -268,7 +268,7 @@ ${body}
         <a class="brand" href="/"><img src="/logo-mark.svg" width="28" height="28" alt=""><span class="word">trabajaen<b>minería</b><i>.cl</i></span></a>
         <p>Reunimos ofertas de minería publicadas en portales de empleo de todo Chile. Sin registro: al postular vas directo a la fuente original. Nunca cobramos a los postulantes.</p>
       </div>
-      <p class="foot-links"><a href="/#ofertas">Ofertas</a><a href="/empleos/">Por región y cargo</a><a href="/guias.html">Guías</a><a href="/cv.html">CV con IA</a><a href="/empresas.html">Para empresas</a><a href="/privacidad.html">Privacidad y cookies</a><a href="#" data-cookies>Preferencias de cookies</a><span>© ${updated.getUTCFullYear()} trabajaenmineria.cl</span></p>
+      <p class="foot-links"><a href="/#ofertas">Ofertas</a><a href="/empleos/">Por región y cargo</a><a href="/guias.html">Guías</a><a href="/recursos/">Centro de recursos</a><a href="/tutoriales.html">Tutoriales</a><a href="/cv.html">CV con IA</a><a href="/empresas.html">Para empresas</a><a href="/privacidad.html">Privacidad y cookies</a><a href="#" data-cookies>Preferencias de cookies</a><span>© ${updated.getUTCFullYear()} trabajaenmineria.cl</span></p>
     </div>
   </footer>
   <nav class="bottom-nav" aria-label="Navegación principal">
@@ -346,7 +346,8 @@ function write(rel, html) {
   fs.mkdirSync(path.dirname(f), { recursive: true });
   fs.writeFileSync(f, html);
 }
-for (const dir of ["oferta", "empleos"]) fs.rmSync(path.join(SITE, dir), { recursive: true, force: true });
+for (const dir of ["oferta", "empleos", "recursos"]) fs.rmSync(path.join(SITE, dir), { recursive: true, force: true });
+const RECURSOS_URLS = [];
 
 // 1) Una página por oferta
 for (const j of jobs) {
@@ -527,6 +528,207 @@ for (const [c, list] of cargoPages) {
   }));
 }
 
+// 3b) Centro de recursos: una ficha por cargo (perfil, formación, competencias, ruta y ofertas del día)
+// Texto propio y general: orienta, pero cada oferta manda en sus requisitos exactos.
+const FICHAS = {
+  "operador-de-equipos": {
+    formacion: ["Curso de operación del equipo (camión, cargador, bulldozer, grúa, etc.) en una OTEC reconocida.", "Licencia profesional A4/A5 para camiones o clase D para maquinaria.", "Inducción de seguridad minera y curso de manejo a la defensiva.", "Muchas mineras tienen programas de formación de operadores que pagan el curso a quienes seleccionan."],
+    competencias: ["Concentración durante turnos largos.", "Respeto estricto de las reglas de tránsito en faena.", "Cuidado del equipo y reporte oportuno de fallas.", "Trabajo coordinado por radio con despacho y otros operadores."],
+    ruta: ["Ayudante o conductor de apoyo", "Operador de equipo auxiliar", "Operador de equipo de extracción", "Operador líder o instructor", "Supervisor de operaciones"],
+    entorno: "Trabaja en la mina rajo abierto o subterránea, o en la planta, normalmente en sistemas de turnos como 7x7 o 4x3, con alojamiento en campamento cuando la faena es remota.",
+  },
+  "mantenedor-mecanico": {
+    formacion: ["Título técnico de nivel medio o superior en mecánica industrial, automotriz o de equipo pesado.", "Cursos de los fabricantes (motores, transmisiones, hidráulica) de los equipos que se mantienen.", "Bloqueo y aislación de energías, trabajo en altura y rigging, según el puesto.", "Certificaciones de soldadura o neumática suman en mantención de planta."],
+    competencias: ["Diagnóstico ordenado de fallas.", "Lectura de manuales, planos y pautas de mantención.", "Trabajo en equipo bajo presión para devolver equipos a operación.", "Registro preciso del trabajo realizado."],
+    ruta: ["Ayudante mecánico", "Mecánico", "Mantenedor especialista", "Planificador o líder de mantención", "Supervisor o jefe de mantenimiento"],
+    entorno: "Trabaja en talleres de camiones, en terreno junto a los equipos o en la planta de procesos, con turnos rotativos y tareas programadas y de emergencia.",
+  },
+  "electrico-e-instrumentista": {
+    formacion: ["Título técnico o profesional en electricidad, electromecánica, electrónica o instrumentación.", "Licencia SEC acorde al tipo de instalación.", "Cursos de autómatas programables (PLC), variadores y sistemas de control.", "Bloqueo de energías y trabajo con alta tensión, según el puesto."],
+    competencias: ["Rigurosidad con los procedimientos de seguridad eléctrica.", "Lectura de diagramas unilineales y de control.", "Uso de instrumentos de medición y calibración.", "Capacidad para aprender sistemas automatizados nuevos."],
+    ruta: ["Ayudante eléctrico", "Eléctrico o instrumentista", "Especialista en control o automatización", "Supervisor eléctrico", "Ingeniero o jefe de área"],
+    entorno: "Trabaja en subestaciones, salas eléctricas, planta concentradora, chancado y equipos móviles, en turnos y con guardias para emergencias.",
+  },
+  "conductor-y-chofer": {
+    formacion: ["Licencia profesional vigente (A2 para transporte de personas, A4/A5 para carga).", "Curso de manejo a la defensiva y, en faena, curso de conducción en camino minero.", "Para cargas peligrosas, curso y habilitación específica.", "Exámenes psicosensotécnicos al día."],
+    competencias: ["Conducción segura en caminos de altura y de ripio.", "Puntualidad y responsabilidad con horarios de traslado.", "Revisión diaria del vehículo.", "Buen trato con los pasajeros."],
+    ruta: ["Conductor de camioneta o apoyo", "Conductor de bus de personal o camión", "Conductor de carga especial", "Coordinador de transporte", "Jefe de flota"],
+    entorno: "Recorre los tramos entre ciudad, campamento y faena, o caminos internos de la mina, con turnos y descansos regulados.",
+  },
+  "prevencionista-de-riesgos": {
+    formacion: ["Título de técnico o ingeniero en prevención de riesgos.", "Registro vigente como experto en la SEREMI de Salud.", "Conocimiento del Reglamento de Seguridad Minera (DS 132) y de la Ley 16.744.", "Cursos de investigación de accidentes y sistemas de gestión (ISO 45001)."],
+    competencias: ["Liderazgo para promover conductas seguras.", "Capacidad de observar y detener trabajos inseguros.", "Redacción clara de informes y procedimientos.", "Capacitación de equipos en terreno."],
+    ruta: ["Asistente de prevención", "Prevencionista de contrato", "Prevencionista senior o de área", "Jefe de prevención", "Gerente de seguridad y salud"],
+    entorno: "Trabaja en terreno junto a las cuadrillas y en oficina, revisando permisos, charlas, inspecciones y la documentación que exige la mandante.",
+  },
+  "supervisor-y-jefatura": {
+    formacion: ["Título técnico o profesional en el área que supervisa.", "Experiencia previa como operador, mantenedor o especialista.", "Cursos de liderazgo, gestión de equipos y planificación.", "Conocimiento de la normativa de seguridad y del contrato."],
+    competencias: ["Liderazgo y comunicación con la cuadrilla.", "Toma de decisiones con información incompleta.", "Control de avance, costos y calidad.", "Coordinación con la mandante y otras áreas."],
+    ruta: ["Trabajador con experiencia", "Capataz o líder de turno", "Supervisor", "Jefe de turno o de área", "Administrador de contrato o superintendente"],
+    entorno: "Reparte su tiempo entre terreno y oficina, con turnos y responsabilidad por personas, equipos y resultados.",
+  },
+  "ingeniero": {
+    formacion: ["Título de ingeniería civil o de ejecución en minas, metalurgia, mecánica, eléctrica, química o industrial.", "Software de planificación, simulación o análisis de datos según el área.", "Inglés técnico, muy valorado en grandes mineras.", "Postítulos en gestión de activos, proyectos o confiabilidad."],
+    competencias: ["Análisis de datos y resolución de problemas.", "Comunicación con equipos de terreno.", "Gestión de proyectos y contratistas.", "Visión de seguridad, costos y productividad."],
+    ruta: ["Ingeniero en práctica o trainee", "Ingeniero junior", "Ingeniero senior o especialista", "Jefe de unidad", "Superintendente o gerente"],
+    entorno: "Trabaja en faena y en oficinas centrales, con turnos en faena o jornada en ciudad según el cargo.",
+  },
+  "geologo-y-topografo": {
+    formacion: ["Título de geólogo, técnico en geología, topógrafo o ingeniero en geomensura.", "Manejo de estación total, GPS de precisión y drones, en topografía.", "Software de modelamiento geológico y de planificación minera.", "Cursos de muestreo y control de calidad de muestras."],
+    competencias: ["Precisión en mediciones y registros.", "Trabajo en terreno en condiciones exigentes.", "Interpretación de planos y modelos 3D.", "Orden con la información y los datos."],
+    ruta: ["Ayudante de topografía o muestrero", "Topógrafo o geólogo de terreno", "Geólogo de modelamiento o topógrafo senior", "Jefe de geología o topografía", "Superintendente de geología"],
+    entorno: "Trabaja en la mina, en exploración y en sondajes, muchas veces en zonas remotas y de altura, con turnos.",
+  },
+  "soldador": {
+    formacion: ["Curso de soldadura en una OTEC o liceo técnico.", "Certificación vigente según proceso (SMAW, GMAW, FCAW, TIG) y posición.", "Trabajo en caliente, trabajo en altura y espacios confinados.", "Lectura de planos de estructuras y piping."],
+    competencias: ["Precisión y calidad en cada cordón.", "Seguridad con permisos de trabajo en caliente.", "Trabajo en equipo con mecánicos y montajistas.", "Paciencia para trabajos de reparación detallados."],
+    ruta: ["Ayudante de soldador", "Soldador", "Soldador calificado", "Maestro mayor o capataz", "Supervisor de montaje o mantención"],
+    entorno: "Trabaja en talleres, plantas y proyectos de construcción o mantención mayor (paradas de planta), con turnos intensivos.",
+  },
+  "bodega-y-logistica": {
+    formacion: ["Enseñanza media o título técnico en logística, administración o comercio.", "Licencia de grúa horquilla (clase D) para mover carga.", "Manejo de SAP u otros sistemas de inventario.", "Cursos de almacenamiento de sustancias peligrosas, según la bodega."],
+    competencias: ["Orden y exactitud con los registros.", "Planificación de despachos y stock.", "Atención a las áreas que piden repuestos.", "Seguridad en el manejo de carga."],
+    ruta: ["Ayudante de bodega", "Bodeguero u operador de grúa horquilla", "Encargado de bodega o inventario", "Comprador o planificador de abastecimiento", "Jefe de logística"],
+    entorno: "Trabaja en bodegas de faena o de la ciudad, coordinando con compras, mantención y transporte.",
+  },
+  "administrativo": {
+    formacion: ["Título técnico o profesional en administración, contabilidad, recursos humanos o similar.", "Excel intermedio o avanzado.", "Manejo de SAP u otros sistemas de gestión.", "Conocimiento de legislación laboral, para cargos de personas."],
+    competencias: ["Organización y cumplimiento de plazos.", "Atención clara a trabajadores y proveedores.", "Confidencialidad con la información.", "Trabajo con documentos y controles."],
+    ruta: ["Asistente administrativo", "Administrativo de faena o contrato", "Analista", "Jefe administrativo o de personas", "Gerente de administración"],
+    entorno: "Trabaja en oficinas de la ciudad o de la faena; en faena suele haber turnos y apoyo directo a la operación.",
+  },
+  "sin-experiencia": {
+    formacion: ["Enseñanza media completa abre la mayoría de las puertas.", "Cursos cortos: inducción de seguridad minera, primeros auxilios, trabajo en altura.", "Licencia de conducir (B, y luego D o A4) amplía mucho las opciones.", "Programas de formación de mineras y becas de capacitación para personas sin experiencia."],
+    competencias: ["Ganas de aprender y buena disposición.", "Puntualidad y responsabilidad.", "Respeto por las normas de seguridad.", "Adaptación a turnos y a vivir en campamento."],
+    ruta: ["Ayudante, auxiliar o servicios en faena", "Ayudante especializado (mecánico, eléctrico, soldador)", "Operador o técnico", "Especialista", "Supervisor"],
+    entorno: "Muchas personas empiezan en servicios (alimentación, aseo, vigilancia) o como ayudantes en empresas contratistas, y desde ahí se capacitan para otros cargos.",
+  },
+};
+
+{
+  const fichas = CARGOS.filter((c) => PERFILES[c.slug] && FICHAS[c.slug]);
+  const trail0 = [["Inicio", "/"], ["Centro de recursos", null]];
+  for (const c of fichas) {
+    const p = PERFILES[c.slug], f = FICHAS[c.slug];
+    const list = byCargo.get(c.slug) || [];
+    const urlPath = `/recursos/${c.slug}`;
+    const trail = [["Inicio", "/"], ["Centro de recursos", "/recursos/"], [c.name, null]];
+    const li = (arr) => arr.map((t) => `<li>${esc(t)}</li>`).join("");
+    const body = `
+  <div class="wrap">${crumbs(trail)}
+    <main class="layout" id="contenido">
+      <section>
+        <article class="job-detail ficha">
+          <span class="eyebrow"><span class="pulse"></span> Perfil de cargo minero</span>
+          <h1>${esc(c.name)}</h1>
+          <p class="lead-left">${esc(c.intro)}</p>
+          <div class="ficha-actions no-print">
+            ${hasCargoPage.has(c.slug) ? `<a class="btn" href="/empleos/${c.slug}">Ver ${list.length} ofertas</a>` : ""}
+            <button class="btn btn-ghost" type="button" onclick="window.track&&track('descargar_ficha',{cargo:'${c.slug}'});print()">Guardar ficha en PDF</button>
+          </div>
+          <h2>Dónde y cómo trabaja</h2>
+          <p>${esc(f.entorno)}</p>
+          <div class="perfil-grid">
+            <div><h3>Qué hace</h3><ul>${li(p.hace)}</ul></div>
+            <div><h3>Qué suelen pedir</h3><ul>${li(p.pide)}</ul></div>
+            <div><h3>Formación y certificaciones</h3><ul>${li(f.formacion)}</ul></div>
+            <div><h3>Competencias que se valoran</h3><ul>${li(f.competencias)}</ul></div>
+          </div>
+          <h2>Ruta de crecimiento</h2>
+          <ol class="ruta">${f.ruta.map((r) => `<li>${esc(r)}</li>`).join("")}</ol>
+          <p class="perfil-tip"><b>Consejo para postular:</b> ${esc(c.tip)}</p>
+          <p class="perfil-note">Ficha orientativa elaborada por trabajaenmineria.cl. Los requisitos exactos los define cada empresa en su oferta.</p>
+        </article>
+        ${list.length ? `
+        <section class="related no-print">
+          <h2>Ofertas de ${esc(c.plural.toLowerCase())} hoy</h2>
+          <ol class="jobs">${list.slice(0, 5).map(jobCard).join("")}
+          </ol>
+          ${hasCargoPage.has(c.slug) ? `<a class="more" href="/empleos/${c.slug}">Ver las ${list.length} ofertas</a>` : ""}
+        </section>` : ""}
+      </section>
+      <aside class="side no-print">
+        <div class="card card-cta">
+          <h3>Arma tu CV para este cargo</h3>
+          <p>Gratis, sin registro y con sugerencias de palabras clave para ${esc(c.name.toLowerCase())}.</p>
+          <a class="btn" href="/cv.html">Crear mi CV</a>
+        </div>
+        <div class="card">
+          <h3>Otros perfiles</h3>
+          <ul class="links">${fichas.filter((o) => o !== c).map((o) => `<li><a href="/recursos/${o.slug}">${esc(o.name)}</a></li>`).join("")}</ul>
+        </div>
+        <div class="card">
+          <h3>Aprende a usar el sitio</h3>
+          <p>Videos cortos para buscar, postular y armar tu CV.</p>
+          <a class="more share-li" href="/tutoriales.html">Ver tutoriales</a>
+        </div>
+      </aside>
+    </main>
+  </div>`;
+    const ld = [crumbsLd(trail), {
+      "@context": "https://schema.org", "@type": "Occupation", name: c.name,
+      description: c.intro, occupationLocation: { "@type": "Country", name: "Chile" },
+      skills: f.competencias.join(" "), qualifications: p.pide.join(" "),
+    }];
+    write(`recursos/${c.slug}.html`, page({
+      urlPath, ld,
+      title: `${c.name} en minería: qué hace, requisitos y formación | Trabaja en Minería`,
+      description: `Perfil del cargo ${c.name.toLowerCase()} en minería: funciones, requisitos habituales, cursos y certificaciones, competencias y ruta de crecimiento. Con ofertas del día.`,
+      body,
+    }));
+  }
+
+  // Índice del centro de recursos
+  const body = `
+  <section class="cv-hero seo-hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="wrap">${crumbs(trail0)}
+      <span class="eyebrow"><span class="pulse"></span> ${fichas.length} perfiles de cargo · gratis</span>
+      <h1>Centro de recursos <span class="grad">para trabajar en minería.</span></h1>
+      <p class="lead">Fichas de cada cargo con lo que hace, lo que piden y cómo prepararte. Además, guías y videos para postular mejor.</p>
+      <label class="res-search no-print"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="m20 20-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input id="res-q" type="search" placeholder="Busca un cargo: operador, eléctrico, soldador…" aria-label="Buscar perfil de cargo"></label>
+    </div>
+  </section>
+  <main class="wrap guides" id="contenido">
+    <section>
+      <div class="sec-head"><h2>Perfiles de cargo</h2><p>Funciones, requisitos habituales, formación, competencias y ruta de crecimiento de los cargos más buscados.</p></div>
+      <ul class="res-grid" id="res-grid">${fichas.map((c) => `
+        <li data-q="${esc(norm(c.name + " " + c.plural + " " + c.intro))}"><a href="/recursos/${c.slug}">
+          <small>Perfil de cargo</small><b>${esc(c.name)}</b><span>${esc(c.intro.split(". ")[0])}.</span>
+          <em>${(byCargo.get(c.slug) || []).length} ofertas hoy</em></a></li>`).join("")}
+      </ul>
+      <p class="res-empty" id="res-empty" hidden>No encontramos ese cargo. Prueba con otra palabra o revisa <a href="/empleos/">todas las ofertas por cargo</a>.</p>
+    </section>
+    <section>
+      <div class="sec-head"><h2>Más recursos</h2></div>
+      <ul class="hub-grid">
+        <li><a href="/tutoriales.html"><b>Videos tutoriales</b><span>Busca, postula y arma tu CV</span></a></li>
+        <li><a href="/guias.html"><b>Guías y noticias</b><span>Turnos, licencias, exámenes</span></a></li>
+        <li><a href="/cv.html"><b>CV para minería</b><span>Gratis y sin registro</span></a></li>
+        <li><a href="/guias.html#guia-estafas"><b>Ofertas falsas</b><span>Cómo reconocerlas</span></a></li>
+      </ul>
+    </section>
+  </main>
+  <script>
+    (function () {
+      var q = document.getElementById("res-q"), items = document.querySelectorAll("#res-grid li"), empty = document.getElementById("res-empty");
+      var norm = function (s) { return s.normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLowerCase(); };
+      q.addEventListener("input", function () {
+        var t = norm(q.value.trim()).split(/\\s+/).filter(Boolean), n = 0;
+        items.forEach(function (li) { var ok = t.every(function (w) { return li.dataset.q.indexOf(w) >= 0; }); li.hidden = !ok; if (ok) n++; });
+        empty.hidden = n > 0;
+      });
+    })();
+  </script>`;
+  write("recursos/index.html", page({
+    urlPath: "/recursos/",
+    title: "Centro de recursos: perfiles de cargos mineros | Trabaja en Minería",
+    description: "Perfiles de los cargos más buscados en minería: operador, mantenedor, eléctrico, conductor, prevencionista, soldador y más. Funciones, requisitos, formación y ruta de crecimiento.",
+    body, ld: [crumbsLd([["Inicio", "/"], ["Centro de recursos", null]])],
+  }));
+  RECURSOS_URLS.push(`${BASE}/recursos/`, ...fichas.map((c) => `${BASE}/recursos/${c.slug}`));
+}
+
 // 4) jobs.json con el campo "page" (para que el buscador enlace a cada oferta)
 // También el cargo detectado ("Se busca: …"), para mostrarlo y enlazarlo en el buscador
 const out = { ...data, jobs: (data.jobs || []).map((j) => {
@@ -546,6 +748,8 @@ const urls = [
   [`${BASE}/guias.html`, null, "weekly", "0.7"],
   [`${BASE}/cv.html`, null, "monthly", "0.6"],
   [`${BASE}/empresas.html`, null, "monthly", "0.5"],
+  [`${BASE}/tutoriales.html`, null, "monthly", "0.6"],
+  ...RECURSOS_URLS.map((u) => [u, today, "weekly", "0.7"]),
   [`${BASE}/privacidad.html`, null, "yearly", "0.2"],
   ...jobs.map((j) => [BASE + j.page, isoDay(j._date), "weekly", "0.5"]),
 ];
