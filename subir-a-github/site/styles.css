@@ -229,6 +229,9 @@ kbd { font: 500 .72rem var(--font); background: var(--fill); border-radius: 6px;
 }
 .promo:hover { box-shadow: var(--shadow); transform: translateY(-1px); }
 .promo-icon { width: 50px; height: 50px; border-radius: 14px; display: grid; place-items: center; color: #fff; background: linear-gradient(180deg, #3d9bff, #0066cc); }
+/* Logo de Mirrow en el banner: baldosa blanca (el logo trae sus propios azules) */
+.promo-logo { background: #fff; border: 1px solid var(--line); box-shadow: var(--shadow-sm); }
+.promo-logo img { width: 72%; height: auto; display: block; }
 .promo-text { display: grid; gap: 1px; min-width: 0; }
 .promo-text small { font-size: .7rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--info); }
 .promo-text b { font-family: var(--display); font-size: 1.06rem; font-weight: 600; }
