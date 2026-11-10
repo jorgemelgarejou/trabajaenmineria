@@ -692,6 +692,56 @@ body[data-tab="crear"] .cv-tools .promo { order: 5; }
 .hub-grid b { font-family: var(--display); font-size: 1.05rem; letter-spacing: -.02em; color: var(--ink); }
 .hub-grid span { color: var(--muted); font-size: .86rem; }
 .seo-page .bottom-nav { grid-template-columns: repeat(4, 1fr); }
+
+/* "Se busca: <cargo>" en cada oferta */
+.tag-cargo { background: var(--accent-soft); color: var(--accent-ink); text-decoration: none; font-weight: 600; }
+a.tag-cargo:hover { background: var(--accent-line); }
+
+/* Perfil del cargo (qué hace / qué suelen pedir) */
+.perfil h2 { margin-top: 0; }
+.perfil-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 6px 0 12px; }
+.perfil-grid > div { background: var(--fill); border-radius: 14px; padding: 14px 16px; }
+.perfil-grid h3 { margin: 0 0 6px; font-size: .78rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--accent-ink); }
+.perfil-grid ul { margin: 0; padding-left: 18px; color: var(--ink-2); font-size: .92rem; }
+.perfil-grid li + li { margin-top: 4px; }
+.perfil-tip { margin: 0 0 6px !important; }
+.perfil-note { font-size: .8rem !important; color: var(--muted) !important; margin: 0 !important; }
+
+/* Portada: de dónde vienen las ofertas */
+.sources { padding: 56px 0 64px; background: var(--bg-2); border-top: 1px solid var(--line); }
+.sources-head { max-width: 680px; margin-bottom: 22px; }
+.sources-head h2 { font-size: clamp(1.6rem, 3.2vw, 2.2rem); letter-spacing: -.035em; margin: 10px 0 8px; }
+.sources-head p { margin: 0; color: var(--muted); }
+.sources-list { list-style: none; padding: 0; margin: 0 0 22px; display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; }
+.sources-list li { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; display: grid; gap: 2px; }
+.sources-list b { font-family: var(--display); letter-spacing: -.02em; }
+.sources-list span { color: var(--muted); font-size: .85rem; }
+.sources-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 0 0 18px; }
+.sources-stats div { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+.sources-stats dt { color: var(--muted); font-size: .8rem; }
+.sources-stats dd { margin: 2px 0 0; font-family: var(--display); font-size: 1.5rem; font-weight: 700; letter-spacing: -.03em; }
+.sources-cta { margin: 0; color: var(--ink-2); }
+.sources-cta a { color: var(--accent-ink); font-weight: 600; }
+
+/* Página para empresas */
+.stats-inline { margin-top: 8px; }
+.why-grid { list-style: none; padding: 0; margin: 0 0 44px; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+.why-grid li { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 22px; box-shadow: var(--shadow-sm); display: grid; gap: 6px; }
+.why-grid b { font-family: var(--display); font-size: 1.08rem; letter-spacing: -.02em; }
+.why-grid span { color: var(--ink-2); font-size: .93rem; }
+.steps-list { list-style: none; counter-reset: paso; padding: 0; margin: 0 0 18px; display: grid; gap: 10px; }
+.steps-list li { counter-increment: paso; position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px 18px 70px; display: grid; gap: 4px; }
+.steps-list li::before { content: counter(paso); position: absolute; left: 20px; top: 18px; width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; font-weight: 700; color: var(--accent-ink); background: var(--accent-soft); }
+.steps-list span { color: var(--ink-2); font-size: .93rem; }
+.contact-box { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 44px; padding: 24px; border-radius: var(--radius); background: linear-gradient(160deg, var(--accent-soft), transparent 70%), var(--surface); border: 1px solid var(--accent-line); }
+.contact-box h3 { margin: 0 0 4px; font-size: 1.2rem; letter-spacing: -.02em; }
+.contact-box p { margin: 0; color: var(--ink-2); max-width: 560px; }
+.contact-box .btn[hidden], .contact-soon[hidden] { display: none; }
+.contact-soon { font-size: .9rem; color: var(--muted) !important; }
+@media (max-width: 720px) {
+  .perfil-grid, .sources-stats { grid-template-columns: 1fr; }
+  .contact-box .btn { width: 100%; }
+}
 @media (max-width: 720px) {
   .job-detail, .job-tips { padding: 20px; }
   .job-apply .btn { width: 100%; justify-content: center; }

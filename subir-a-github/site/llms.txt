@@ -1,6 +1,6 @@
 # Trabaja en Minería (trabajaenmineria.cl)
 
-> Buscador gratuito de ofertas de trabajo en minería en Chile. Reúne ofertas publicadas en portales de empleo y en los sitios de empleo de empresas mineras (Codelco, BHP, Teck, Portal Minero y otros), se actualiza cada 4 horas y enlaza siempre a la oferta original. No pide registro ni cobra a los postulantes. Incluye un creador y corrector de CV para minería y guías para postular.
+> Buscador gratuito de ofertas de trabajo en minería en Chile. Reúne ofertas publicadas en portales de empleo y en los sitios de empleo de empresas mineras (Codelco, BHP, Teck, Portal Minero y otros), se actualiza cada 2 horas y enlaza siempre a la oferta original. No pide registro ni cobra a los postulantes. Incluye un creador y corrector de CV para minería y guías para postular.
 
 ## Páginas principales
 
@@ -8,6 +8,7 @@
 - [Empleos por región y cargo](https://trabajaenmineria.cl/empleos/): una página por región (por ejemplo [Antofagasta](https://trabajaenmineria.cl/empleos/antofagasta), [Atacama](https://trabajaenmineria.cl/empleos/atacama), [Tarapacá](https://trabajaenmineria.cl/empleos/tarapaca), [Coquimbo](https://trabajaenmineria.cl/empleos/coquimbo)) y por cargo (por ejemplo [operadores de equipos](https://trabajaenmineria.cl/empleos/operador-de-equipos), [mantenedores mecánicos](https://trabajaenmineria.cl/empleos/mantenedor-mecanico), [conductores](https://trabajaenmineria.cl/empleos/conductor-y-chofer), [sin experiencia](https://trabajaenmineria.cl/empleos/sin-experiencia)). Cada oferta tiene su propia página en /oferta/ con el enlace para postular en la fuente original.
 - [Guías y noticias](https://trabajaenmineria.cl/guias.html): cómo entrar a la minería sin experiencia, licencias de conducir (clase D, A4, A5), turnos, CV, exámenes preocupacionales y cómo detectar ofertas falsas. Resúmenes de noticias del sector con enlace a cada fuente.
 - [CV minero](https://trabajaenmineria.cl/cv.html): crea o mejora un CV para cargos mineros, gratis y sin registro; descarga en Word o PDF. Los datos personales no se procesan.
+- [Para empresas](https://trabajaenmineria.cl/empresas.html): cómo una empresa minera o contratista puede hacer aparecer gratis sus ofertas en el sitio.
 - [Privacidad](https://trabajaenmineria.cl/privacidad.html)
 
 ## Datos

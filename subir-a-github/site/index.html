@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Trabaja en Minería — Ofertas de empleo minero en Chile</title>
-  <meta name="description" content="Ofertas de trabajo en minería en Chile actualizadas cada 4 horas: operadores, mantención, ingeniería, geología y más en Antofagasta, Atacama, Coquimbo y todo el país.">
+  <meta name="description" content="Ofertas de trabajo en minería en Chile actualizadas cada 2 horas: operadores, mantención, ingeniería, geología y más en Antofagasta, Atacama, Coquimbo y todo el país.">
   <meta name="theme-color" content="#fbfbfd" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
   <meta name="color-scheme" content="light dark">
@@ -64,7 +64,7 @@
   <section class="hero">
     <div class="hero-bg" aria-hidden="true"></div>
     <div class="wrap hero-inner">
-      <span class="eyebrow"><span class="pulse"></span> Ofertas actualizadas cada 4 horas</span>
+      <span class="eyebrow"><span class="pulse"></span> Ofertas actualizadas cada 2 horas</span>
       <h1>Tu próxima faena<br><span class="grad">empieza aquí.</span></h1>
       <p class="lead">Todas las ofertas de minería de Chile en un solo lugar: faenas, contratistas y proveedores. Postula directo, sin registro y sin costo.</p>
 
@@ -86,7 +86,7 @@
       <dl class="stats">
         <div><dt>Ofertas activas</dt><dd id="stat-jobs">—</dd></div>
         <div><dt>Nuevas hoy</dt><dd id="stat-new">—</dd></div>
-        <div><dt>Actualización</dt><dd>cada 4 h</dd></div>
+        <div><dt>Actualización</dt><dd>cada 2 h</dd></div>
         <div><dt>Costo para ti</dt><dd>$0</dd></div>
       </dl>
     </div>
@@ -148,6 +148,12 @@
               <option value="10x10">Turno 10x10</option>
               <option value="14x14">Turno 14x14</option>
             </select>
+            <select id="fecha" aria-label="Fecha de publicación">
+              <option value="">Cualquier fecha</option>
+              <option value="1">Publicadas hoy</option>
+              <option value="7">Últimos 7 días</option>
+              <option value="30">Últimos 30 días</option>
+            </select>
             <select id="sort" aria-label="Ordenar">
               <option value="recent">Más recientes</option>
               <option value="az">Cargo A–Z</option>
@@ -186,13 +192,31 @@
     </main>
   </div>
 
+  <!-- Confianza: de dónde salen las ofertas (cifras calculadas por app.js) -->
+  <section class="sources" aria-labelledby="fuentes-t">
+    <div class="wrap">
+      <div class="sources-head">
+        <span class="eyebrow eyebrow-dark">Ofertas verificables</span>
+        <h2 id="fuentes-t">Cada oferta viene de una fuente real</h2>
+        <p>No inventamos avisos ni intermediamos: tomamos ofertas publicadas por mineras y portales de empleo, y al postular vas directo a la publicación original. Nunca te pediremos dinero.</p>
+      </div>
+      <ul class="sources-list" id="sources-list" aria-label="Fuentes de las ofertas"></ul>
+      <dl class="sources-stats">
+        <div><dt>Ofertas activas</dt><dd id="src-jobs">—</dd></div>
+        <div><dt>Regiones con ofertas</dt><dd id="src-regions">—</dd></div>
+        <div><dt>Publicadas en los últimos 7 días</dt><dd id="src-week">—</dd></div>
+      </dl>
+      <p class="sources-cta">¿Tu empresa busca personal para minería? <a href="/empresas.html">Así llegan tus ofertas aquí, gratis</a>.</p>
+    </div>
+  </section>
+
   <footer class="foot">
     <div class="wrap foot-inner">
       <div>
         <a class="brand" href="./"><img src="logo-mark.svg" width="28" height="28" alt=""><span class="word">trabajaen<b>minería</b><i>.cl</i></span></a>
         <p>Reunimos ofertas de minería publicadas en portales de empleo de todo Chile. Sin registro: al postular vas directo a la fuente original. Nunca cobramos a los postulantes.</p>
       </div>
-      <p class="foot-links"><a href="#ofertas">Ofertas</a><a href="/empleos/">Empleos por región y cargo</a><a href="guias.html">Guías</a><a href="cv.html">CV con IA</a><a href="privacidad.html">Privacidad y cookies</a><a href="#" data-cookies>Preferencias de cookies</a><span>© <span id="year"></span> trabajaenmineria.cl</span></p>
+      <p class="foot-links"><a href="#ofertas">Ofertas</a><a href="/empleos/">Empleos por región y cargo</a><a href="guias.html">Guías</a><a href="cv.html">CV con IA</a><a href="empresas.html">Para empresas</a><a href="privacidad.html">Privacidad y cookies</a><a href="#" data-cookies>Preferencias de cookies</a><span>© <span id="year"></span> trabajaenmineria.cl</span></p>
     </div>
   </footer>
 

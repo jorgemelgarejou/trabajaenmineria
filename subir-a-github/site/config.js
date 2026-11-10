@@ -25,4 +25,6 @@ window.TEM_CONFIG = {
   adLayoutKey: "",
   // Enlace del banner de Mirrow
   mirrowUrl: "https://www.mirrow.cl",
+  // Correo de contacto para empresas (página empresas.html). Vacío = el botón de correo no se muestra.
+  contactoEmpresas: "",
 };

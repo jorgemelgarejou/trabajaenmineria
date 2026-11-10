@@ -43,6 +43,7 @@
   for (const r of REGIONS) $("region").add(new Option(r, r));
   $("region").value = params.get("region") || "";
   $("shift").value = params.get("turno") || "";
+  $("fecha").value = params.get("fecha") || "";
 
   for (const c of CATEGORIES) {
     const b = document.createElement("button");
@@ -60,6 +61,7 @@
   $("q").addEventListener("input", () => { clearTimeout(typing); typing = setTimeout(() => apply(false), 250); });
   $("region").addEventListener("change", () => apply(true));
   $("shift").addEventListener("change", () => apply(false));
+  $("fecha").addEventListener("change", () => apply(false));
   $("sort").addEventListener("change", () => apply(false));
   $("more").addEventListener("click", () => render(false));
   $("nav-saved").addEventListener("click", toggleSavedView);
@@ -113,12 +115,13 @@
         $("updated").textContent = "Actualizado " + new Date(data.updated).toLocaleString("es-CL", { dateStyle: "medium", timeStyle: "short" });
       }
       renderRegionLinks();
+      renderSources();
       apply(false);
     })
     .catch(() => { $("count").textContent = "No se pudieron cargar las ofertas."; $("jobs").innerHTML = ""; });
 
   function filters() {
-    return { q: $("q").value.trim(), region: $("region").value, shift: $("shift").value, cat: category, saved: onlySaved };
+    return { q: $("q").value.trim(), region: $("region").value, shift: $("shift").value, days: $("fecha").value, cat: category, saved: onlySaved };
   }
 
   function matches(j, f, skip) {
@@ -127,6 +130,8 @@
     if (terms.some((t) => !j._hay.includes(t))) return false;
     if (skip !== "region" && f.region && j.region !== f.region) return false;
     if (f.shift && j._shift !== f.shift) return false;
+    // Publicada: hoy = últimas 24 h; 7 y 30 días
+    if (f.days && (!j.date || Date.now() - new Date(j.date) > Number(f.days) * 864e5)) return false;
     if (f.cat && !j._hay.includes(norm(f.cat).slice(0, 6))) return false;
     return true;
   }
@@ -138,7 +143,8 @@
     else filtered.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
 
     const url = new URL(location);
-    ["q", "region", "cat", "turno", "guardados", "buscar"].forEach((k) => url.searchParams.delete(k));
+    ["q", "region", "cat", "turno", "fecha", "guardados", "buscar"].forEach((k) => url.searchParams.delete(k));
+    if (f.days) url.searchParams.set("fecha", f.days);
     if (f.q) url.searchParams.set("q", f.q);
     if (f.region) url.searchParams.set("region", f.region);
     if (f.cat) url.searchParams.set("cat", f.cat);
@@ -159,6 +165,7 @@
     if (f.region) pills.push(["region", f.region]);
     if (f.cat) pills.push(["cat", f.cat]);
     if (f.shift) pills.push(["shift", "Turno " + f.shift]);
+    if (f.days) pills.push(["days", f.days === "1" ? "Publicadas hoy" : `Últimos ${f.days} días`]);
     if (f.saved) pills.push(["saved", "Guardadas"]);
     const box = $("active-filters");
     box.innerHTML = pills.map(([k, label]) =>
@@ -171,6 +178,7 @@
     if (k === "q" || k === "all") $("q").value = "";
     if (k === "region" || k === "all") $("region").value = "";
     if (k === "shift" || k === "all") $("shift").value = "";
+    if (k === "days" || k === "all") $("fecha").value = "";
     if (k === "cat" || k === "all") setCategory("");
     if (k === "saved" || k === "all") onlySaved = false;
     apply(false);
@@ -225,7 +233,7 @@
     if (onlySaved) {
       li.innerHTML = '<b>Aún no guardas ofertas</b>Toca el marcador de una oferta para tenerla a mano después.<div class="empty-actions"><button type="button" class="btn btn-sm" data-do="saved">Ver todas las ofertas</button></div>';
     } else if (!all.length) {
-      li.innerHTML = '<b>Estamos cargando las primeras ofertas</b>La búsqueda automática corre cada 4 horas. Mientras tanto, deja tu CV listo para postular al tiro.<div class="empty-actions"><a class="btn btn-sm" href="cv.html">Preparar mi CV</a></div>';
+      li.innerHTML = '<b>Estamos cargando las primeras ofertas</b>La búsqueda automática corre cada 2 horas. Mientras tanto, deja tu CV listo para postular al tiro.<div class="empty-actions"><a class="btn btn-sm" href="cv.html">Preparar mi CV</a></div>';
     } else {
       // ¿Hay resultados para la misma búsqueda en otra región?
       const elsewhere = {};
@@ -265,6 +273,9 @@
       ${j.description ? `<p class="desc">${esc(j.description.slice(0, 200))}${j.description.length > 200 ? "…" : ""}</p>` : ""}
       <div class="tags">
         ${isNew ? '<span class="tag tag-new">Nuevo</span>' : ""}
+        ${j.cargo ? (j.cargo.page
+          ? `<a class="tag tag-cargo" href="/empleos/${esc(j.cargo.slug)}" title="Ver más ofertas de este cargo">Se busca: ${esc(j.cargo.name)}</a>`
+          : `<span class="tag tag-cargo">Se busca: ${esc(j.cargo.name)}</span>`) : ""}
         ${j._shift ? `<button type="button" class="tag tag-shift" data-shift="${esc(j._shift)}" title="Ver solo turno ${esc(j._shift)}">Turno ${esc(j._shift)}</button>` : ""}
         ${j.region ? `<span class="tag">${esc(j.region)}</span>` : ""}
         <span>${esc(j.source || "")} ${d ? "· " + timeAgo(d) : ""}</span>
@@ -335,6 +346,19 @@
   }
   function shareLinkedIn(url) {
     window.open("https://www.linkedin.com/sharing/share-offsite/?url=" + encodeURIComponent(url), "_blank", "noopener,width=600,height=640");
+  }
+
+  // Sección "Cada oferta viene de una fuente real": cuántas ofertas trae cada fuente
+  function renderSources() {
+    const box = $("sources-list");
+    if (!box) return;
+    const by = {};
+    all.forEach((j) => { if (j.source) by[j.source] = (by[j.source] || 0) + 1; });
+    box.innerHTML = Object.entries(by).sort((a, b) => b[1] - a[1]).map(([s, n]) =>
+      `<li><b>${esc(s)}</b><span>${n.toLocaleString("es-CL")} oferta${n === 1 ? "" : "s"}</span></li>`).join("");
+    $("src-jobs").textContent = all.length.toLocaleString("es-CL");
+    $("src-regions").textContent = new Set(all.map((j) => j.region).filter(Boolean)).size;
+    $("src-week").textContent = all.filter((j) => j.date && Date.now() - new Date(j.date) < 7 * 864e5).length.toLocaleString("es-CL");
   }
 
   function renderRegionLinks() {
