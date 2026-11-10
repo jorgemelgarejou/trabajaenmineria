@@ -696,6 +696,49 @@ body[data-tab="crear"] .cv-tools .promo { order: 5; }
 .hub-grid span { color: var(--muted); font-size: .86rem; }
 .seo-page .bottom-nav { grid-template-columns: repeat(4, 1fr); }
 
+/* Centro de recursos: fichas de cargo */
+.lead-left { color: var(--ink-2); font-size: 1.05rem; margin: 0 0 16px; }
+.ficha-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 8px; }
+.btn-ghost { background: var(--fill); color: var(--ink); box-shadow: none; }
+.btn-ghost:hover { background: var(--line-2); }
+.ficha .perfil-grid { margin-top: 14px; }
+.ruta { list-style: none; counter-reset: r; padding: 0; margin: 4px 0 18px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.ruta li { counter-increment: r; display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px 7px 8px; border-radius: 99px; background: var(--fill); font-size: .88rem; font-weight: 500; color: var(--ink-2); }
+.ruta li::before { content: counter(r); display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: var(--on-accent); font-size: .74rem; font-weight: 700; }
+.ruta li:not(:last-child)::after { content: "→"; margin-left: 4px; color: var(--muted); }
+.res-search { display: flex; align-items: center; gap: 10px; width: min(560px, 100%); margin-top: 6px; padding: 12px 18px; border-radius: 99px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); color: var(--muted); }
+.res-search input { flex: 1; border: 0; background: none; font: inherit; color: var(--ink); outline: none; min-width: 0; }
+.res-grid { list-style: none; padding: 0; margin: 0 0 40px; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+.res-grid li[hidden] { display: none; }
+.res-grid a { display: grid; gap: 4px; height: 100%; padding: 20px 22px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-sm); text-decoration: none; transition: box-shadow .2s, transform .2s; }
+.res-grid a:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+.res-grid small { font-size: .72rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--accent-ink); }
+.res-grid b { font-family: var(--display); font-size: 1.12rem; letter-spacing: -.02em; color: var(--ink); }
+.res-grid span { color: var(--ink-2); font-size: .9rem; line-height: 1.45; }
+.res-grid em { font-style: normal; color: var(--muted); font-size: .82rem; margin-top: 4px; }
+.res-empty { color: var(--muted); }
+@media print {
+  .top, .foot, .bottom-nav, .crumbs, .no-print, .ad-slot, .to-top { display: none !important; }
+  body { background: #fff; padding: 0; }
+  .layout { display: block; padding: 0; }
+  .job-detail { border: 0; box-shadow: none; padding: 0; }
+  .perfil-grid > div { break-inside: avoid; }
+}
+
+/* Videos tutoriales */
+.tut-grid { list-style: none; padding: 0; margin: 0 0 40px; display: grid; grid-template-columns: repeat(auto-fill, minmax(460px, 1fr)); gap: 16px; }
+.tut { display: grid; grid-template-columns: 200px 1fr; gap: 20px; align-items: start; padding: 18px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-sm); }
+.tut video { width: 100%; aspect-ratio: 9 / 16; border-radius: 16px; background: #000; object-fit: cover; }
+.tut small { font-size: .72rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--accent-ink); }
+.tut h2 { font-size: 1.3rem; letter-spacing: -.025em; margin: 4px 0 10px; }
+.tut ol { margin: 0 0 6px; padding-left: 20px; color: var(--ink-2); font-size: .93rem; }
+.tut ol li + li { margin-top: 4px; }
+@media (max-width: 600px) {
+  .tut-grid { grid-template-columns: 1fr; }
+  .tut { grid-template-columns: 1fr; }
+  .tut video { max-height: 70vh; width: auto; margin: 0 auto; display: block; }
+}
+
 /* "Se busca: <cargo>" en cada oferta */
 .tag-cargo { background: var(--accent-soft); color: var(--accent-ink); text-decoration: none; font-weight: 600; }
 a.tag-cargo:hover { background: var(--accent-line); }
