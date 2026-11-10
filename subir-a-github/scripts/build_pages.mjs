@@ -240,7 +240,7 @@ function page({ urlPath, title, description, body, ld = [], bodyClass = "" }) {
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/styles.css">${HEAD_SCRIPTS}
+  <link rel="stylesheet" href="/styles.css?v=20261110">${HEAD_SCRIPTS}
 ${ld.map((o) => `  <script type="application/ld+json">${jsonLd(o)}</script>`).join("\n")}
 </head>
 <body class="seo-page ${bodyClass}">
@@ -274,7 +274,7 @@ ${body}
   <nav class="bottom-nav" aria-label="Navegación principal">
     <a href="/#ofertas"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" fill="none" stroke="currentColor" stroke-width="2"/></svg>Ofertas</a>
     <a href="/empleos/"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 21s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="9" r="2.5" fill="currentColor"/></svg>Regiones</a>
-    <a href="/guias.html"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h5v17H6a2 2 0 0 0-2 2zM20 5a2 2 0 0 0-2-2h-5v17h5a2 2 0 0 1 2 2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Guías</a>
+    <a href="/recursos/"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h5v17H6a2 2 0 0 0-2 2zM20 5a2 2 0 0 0-2-2h-5v17h5a2 2 0 0 1 2 2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Recursos</a>
     <a href="/cv.html"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M7 3h7l5 5v13H7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M14 3v5h5M10 13h6M10 17h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>CV con IA</a>
   </nav>
   <script src="/config.js"></script>
