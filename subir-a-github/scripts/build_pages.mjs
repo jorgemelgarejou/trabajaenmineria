@@ -99,6 +99,73 @@ const CARGOS = [
     tip: "Lee la guía para entrar a la minería sin experiencia: explica qué cursos y licencias te abren más puertas." },
 ];
 
+// Perfil de cada cargo: qué hace y qué se suele pedir (texto general, orientativo)
+const PERFILES = {
+  "operador-de-equipos": {
+    hace: ["Opera camiones de extracción, cargadores, bulldozers, motoniveladoras, grúas o equipos de planta.", "Revisa el equipo antes de cada turno (check list) e informa fallas.", "Cumple las reglas de tránsito de la faena y los procedimientos de seguridad."],
+    pide: ["Enseñanza media completa.", "Licencia de conducir según el equipo (A2, A4, A5 o clase D).", "Curso de operación del equipo y, ojalá, experiencia acreditada.", "Aprobar exámenes preocupacionales y de altura geográfica si la faena lo requiere."],
+  },
+  "mantenedor-mecanico": {
+    hace: ["Realiza mantenciones preventivas y correctivas de equipos móviles o fijos.", "Diagnostica fallas y cambia componentes según pauta del fabricante.", "Registra el trabajo en el sistema de mantenimiento y cuida la disponibilidad de los equipos."],
+    pide: ["Título técnico en mecánica (industrial, automotriz o equipo pesado) o experiencia equivalente.", "Experiencia con equipos de faena y conocimiento de sus marcas.", "Cursos de bloqueo y aislación de energías.", "Disponibilidad para turnos y trabajo en altura geográfica."],
+  },
+  "electrico-e-instrumentista": {
+    hace: ["Mantiene sistemas eléctricos, motores, tableros e instrumentos de planta.", "Calibra sensores y apoya la automatización de procesos.", "Trabaja con energías peligrosas siguiendo procedimientos de bloqueo."],
+    pide: ["Título técnico o profesional en electricidad, electromecánica o instrumentación.", "Licencia SEC vigente según la clase del trabajo.", "Experiencia en mantención industrial.", "Manejo de planos y diagramas eléctricos."],
+  },
+  "conductor-y-chofer": {
+    hace: ["Traslada personal, materiales o combustible entre ciudad, campamento y faena.", "Cuida el vehículo y su documentación al día.", "Respeta velocidades, descansos y normas de conducción de la faena."],
+    pide: ["Licencia profesional vigente (A2, A3, A4 o A5).", "Hoja de vida del conductor sin infracciones graves.", "Curso de manejo a la defensiva (o disposición a hacerlo).", "Exámenes psicosensotécnicos aprobados."],
+  },
+  "prevencionista-de-riesgos": {
+    hace: ["Identifica peligros y propone medidas para controlar los riesgos.", "Inspecciona trabajos, capacita a los equipos e investiga incidentes.", "Lleva la documentación de seguridad exigida por la mandante y la ley."],
+    pide: ["Título de técnico o ingeniero en prevención de riesgos.", "Registro vigente en la SEREMI de Salud.", "Experiencia en faena o con empresas contratistas.", "Conocimiento del DS 132 (Reglamento de Seguridad Minera)."],
+  },
+  "supervisor-y-jefatura": {
+    hace: ["Organiza el trabajo de una cuadrilla o un turno.", "Controla el avance, la seguridad y la calidad del trabajo.", "Coordina con la mandante y reporta resultados."],
+    pide: ["Experiencia liderando equipos en faena.", "Título técnico o profesional según el área.", "Manejo de planificación y reportes.", "Habilidades de comunicación y resolución de problemas."],
+  },
+  "ingeniero": {
+    hace: ["Planifica, mejora o controla procesos de mina, planta o mantenimiento.", "Analiza datos de producción, costos y confiabilidad.", "Lidera proyectos y coordina con contratistas."],
+    pide: ["Título de ingeniería en el área (minas, metalurgia, mecánica, eléctrica, industrial u otra).", "Experiencia en faena según el nivel del cargo.", "Manejo de software de planificación o análisis.", "Inglés, en muchos cargos de grandes mineras."],
+  },
+  "geologo-y-topografo": {
+    hace: ["Toma y analiza muestras, mapea o modela el yacimiento.", "Realiza levantamientos topográficos y control de avance.", "Apoya la perforación, el sondaje y la planificación minera."],
+    pide: ["Título técnico o profesional en geología, topografía o geomensura.", "Manejo de estación total, GPS o software de modelamiento.", "Experiencia en terreno.", "Disponibilidad para turnos en zonas remotas."],
+  },
+  "soldador": {
+    hace: ["Suelda, corta y repara estructuras, piping y componentes de equipos.", "Arma y monta estructuras en mantenciones y proyectos.", "Trabaja con permisos de trabajo en caliente."],
+    pide: ["Certificación de soldadura vigente (proceso y posición).", "Experiencia en mantención industrial o montaje.", "Lectura de planos.", "Cursos de trabajo en altura y espacios confinados, según el cargo."],
+  },
+  "bodega-y-logistica": {
+    hace: ["Recibe, almacena y despacha repuestos e insumos.", "Controla inventarios en el sistema.", "Coordina compras y traslados a faena."],
+    pide: ["Enseñanza media o título técnico en logística o administración.", "Manejo de SAP u otro sistema de inventario.", "Licencia de grúa horquilla, en muchos cargos.", "Orden y responsabilidad con los registros."],
+  },
+  "administrativo": {
+    hace: ["Apoya la gestión de personal, contratos, documentos y pagos.", "Lleva registros y reportes de la faena o la oficina.", "Atiende a trabajadores, contratistas y proveedores."],
+    pide: ["Título técnico o profesional en administración, contabilidad o recursos humanos.", "Buen manejo de Excel y sistemas de gestión.", "Experiencia en empresas mineras o contratistas (deseable).", "Disponibilidad para turnos si el cargo es en faena."],
+  },
+  "sin-experiencia": {
+    hace: ["Apoya a operadores, mantenedores y maestros en sus tareas.", "Realiza labores de aseo, orden, alimentación o vigilancia en faena.", "Aprende los procedimientos de seguridad desde el primer día."],
+    pide: ["Enseñanza media completa (en la mayoría de los casos).", "Disposición para trabajar en turnos y en zonas remotas.", "Aprobar exámenes preocupacionales.", "Cursos básicos (primeros auxilios, inducción de seguridad) ayudan a destacar."],
+  },
+};
+
+function perfilHtml(c, headingTag = "h2") {
+  const p = PERFILES[c.slug];
+  if (!p) return "";
+  return `
+        <section class="perfil" aria-label="Perfil del cargo">
+          <${headingTag}>Perfil del cargo: ${esc(c.name.toLowerCase())}</${headingTag}>
+          <div class="perfil-grid">
+            <div><h3>Qué hace</h3><ul>${p.hace.map((t) => `<li>${esc(t)}</li>`).join("")}</ul></div>
+            <div><h3>Qué suelen pedir</h3><ul>${p.pide.map((t) => `<li>${esc(t)}</li>`).join("")}</ul></div>
+          </div>
+          <p class="perfil-tip"><b>Consejo:</b> ${esc(c.tip)}</p>
+          <p class="perfil-note">Referencia general: cada oferta indica sus requisitos exactos.</p>
+        </section>`;
+}
+
 function cargoOf(j) {
   const t = norm(j.title);
   return CARGOS.find((c) => c.re.test(t)) || null;
@@ -189,6 +256,7 @@ ${ld.map((o) => `  <script type="application/ld+json">${jsonLd(o)}</script>`).jo
         <a href="/empleos/">Por región y cargo</a>
         <a href="/guias.html">Guías</a>
         <a href="/cv.html">CV con IA</a>
+        <a href="/empresas.html">Empresas</a>
         <a class="btn btn-sm" href="/#ofertas">Buscar ofertas</a>
       </nav>
     </div>
@@ -200,7 +268,7 @@ ${body}
         <a class="brand" href="/"><img src="/logo-mark.svg" width="28" height="28" alt=""><span class="word">trabajaen<b>minería</b><i>.cl</i></span></a>
         <p>Reunimos ofertas de minería publicadas en portales de empleo de todo Chile. Sin registro: al postular vas directo a la fuente original. Nunca cobramos a los postulantes.</p>
       </div>
-      <p class="foot-links"><a href="/#ofertas">Ofertas</a><a href="/empleos/">Por región y cargo</a><a href="/guias.html">Guías</a><a href="/cv.html">CV con IA</a><a href="/privacidad.html">Privacidad y cookies</a><a href="#" data-cookies>Preferencias de cookies</a><span>© ${updated.getUTCFullYear()} trabajaenmineria.cl</span></p>
+      <p class="foot-links"><a href="/#ofertas">Ofertas</a><a href="/empleos/">Por región y cargo</a><a href="/guias.html">Guías</a><a href="/cv.html">CV con IA</a><a href="/empresas.html">Para empresas</a><a href="/privacidad.html">Privacidad y cookies</a><a href="#" data-cookies>Preferencias de cookies</a><span>© ${updated.getUTCFullYear()} trabajaenmineria.cl</span></p>
     </div>
   </footer>
   <nav class="bottom-nav" aria-label="Navegación principal">
@@ -243,7 +311,7 @@ function jobCard(j) {
             ${j.location ? `<span>${ICON.pin}${esc(j.location)}</span>` : ""}
           </div>
           ${desc ? `<p class="desc">${esc(desc.slice(0, 180))}${desc.length > 180 ? "…" : ""}</p>` : ""}
-          <div class="tags">${j.region ? `<span class="tag">${esc(j.region)}</span>` : ""}<span>${esc(j.source || "")} · ${fecha(j._date)}</span></div>
+          <div class="tags">${j._cargo ? `<span class="tag tag-shift">Se busca: ${esc(j._cargo.name)}</span>` : ""}${j.region ? `<span class="tag">${esc(j.region)}</span>` : ""}<span>${esc(j.source || "")} · ${fecha(j._date)}</span></div>
         </li>`;
 }
 
@@ -326,6 +394,7 @@ for (const j of jobs) {
           <dl class="facts">
             ${company ? `<div><dt>${ICON.company} Empresa</dt><dd>${esc(company)}</dd></div>` : ""}
             ${where ? `<div><dt>${ICON.pin} Lugar</dt><dd>${esc(where)}</dd></div>` : ""}
+            ${j._cargo ? `<div><dt>${ICON.company} Se busca</dt><dd>${hasCargoPage.has(j._cargo.slug) ? `<a href="/empleos/${j._cargo.slug}">${esc(j._cargo.name)}</a>` : esc(j._cargo.name)}</dd></div>` : ""}
             <div><dt>${ICON.cal} Publicada</dt><dd><time datetime="${j._date.toISOString()}">${fecha(j._date)}</time> en ${esc(sourceName)}</dd></div>
           </dl>
           ${desc ? `<h2>Descripción</h2><p class="job-desc">${esc(desc)}</p>` : ""}
@@ -336,12 +405,9 @@ for (const j of jobs) {
           </div>
         </article>
         ${j._cargo ? `
-        <section class="job-tips">
-          <h2>Consejos para postular a ${esc(j._cargo.name.toLowerCase())}</h2>
-          <p>${esc(j._cargo.intro)}</p>
-          <p><b>Consejo:</b> ${esc(j._cargo.tip)}</p>
-          <p class="links-inline">${hasCargoPage.has(j._cargo.slug) ? `<a href="/empleos/${j._cargo.slug}">Ver más ofertas de ${esc(j._cargo.plural.toLowerCase())}</a>` : ""}<a href="/guias.html">Leer las guías para postular</a></p>
-        </section>` : ""}
+        <div class="job-tips">${perfilHtml(j._cargo)}
+          <p class="links-inline">${hasCargoPage.has(j._cargo.slug) ? `<a href="/empleos/${j._cargo.slug}">Ver más ofertas de ${esc(j._cargo.plural.toLowerCase())}</a>` : ""}<a href="/guias.html">Leer las guías para postular</a><a href="/cv.html">Preparar mi CV</a></p>
+        </div>` : ""}
         <section class="job-tips job-safe">
           <h2>Postula seguro</h2>
           <p>Ninguna empresa seria cobra por postular, por un curso obligatorio o por "asegurarte el cupo". Desconfía si te piden dinero o datos bancarios antes de un contrato. <a href="/guias.html#guia-estafas">Cómo detectar ofertas falsas</a>.</p>
@@ -361,7 +427,7 @@ for (const j of jobs) {
 }
 
 // 2) Páginas de región y de cargo
-function listPage({ urlPath, h1, lead, intro, list, trail, title, description, extraLinks = "" }) {
+function listPage({ urlPath, h1, lead, intro, list, trail, title, description, extraLinks = "", extraBlock = "" }) {
   const shown = list.slice(0, 120);
   const body = `
   <section class="cv-hero seo-hero">
@@ -378,8 +444,8 @@ function listPage({ urlPath, h1, lead, intro, list, trail, title, description, e
       <section>
         <div class="seo-intro">
           <p>${esc(intro)}</p>${extraLinks}
-        </div>
-        <div class="toolbar"><div><h2>${list.length} ofertas</h2><span class="updated">Las más recientes primero. Se actualizan cada 4 horas.</span></div></div>
+        </div>${extraBlock ? `<div class="job-tips">${extraBlock}</div>` : ""}
+        <div class="toolbar"><div><h2>${list.length} ofertas</h2><span class="updated">Las más recientes primero. Se actualizan cada 2 horas.</span></div></div>
         <ol class="jobs">${shown.map(jobCard).join("")}
         </ol>
         ${list.length > shown.length ? `<a class="more" href="/#ofertas">Ver las ${list.length} ofertas en el buscador</a>` : ""}
@@ -401,7 +467,7 @@ for (const [region, list] of regionPages) {
   write(`empleos/${slugify(region)}.html`, listPage({
     urlPath, list,
     title: `Trabajo en minería en ${region}: ${list.length} ofertas | Trabaja en Minería`,
-    description: `${list.length} ofertas de trabajo en minería en la región de ${region}, actualizadas cada 4 horas: operadores, mantenedores, eléctricos, conductores y más. Postula directo y sin registro.`,
+    description: `${list.length} ofertas de trabajo en minería en la región de ${region}, actualizadas cada 2 horas: operadores, mantenedores, eléctricos, conductores y más. Postula directo y sin registro.`,
     h1: `Trabajo en minería en <span class="grad">${esc(region)}.</span>`,
     lead: `${list.length} ofertas de empleo minero en la región de ${region}, de faenas, contratistas y proveedores. Postula directo, sin registro y sin costo.`,
     intro: REGIONES[region],
@@ -416,12 +482,13 @@ for (const [c, list] of cargoPages) {
   write(`empleos/${c.slug}.html`, listPage({
     urlPath: `/empleos/${c.slug}`, list,
     title: `Trabajo de ${c.name.toLowerCase()} en minería: ${list.length} ofertas | Trabaja en Minería`,
-    description: `${list.length} ofertas de trabajo para ${c.plural.toLowerCase()} en la minería de Chile, actualizadas cada 4 horas. Requisitos habituales, consejos y postulación directa sin registro.`,
+    description: `${list.length} ofertas de trabajo para ${c.plural.toLowerCase()} en la minería de Chile, actualizadas cada 2 horas. Requisitos habituales, consejos y postulación directa sin registro.`,
     h1: `Empleos de ${esc(c.name.toLowerCase())} <span class="grad">en minería.</span>`,
     lead: `${list.length} ofertas para ${c.plural.toLowerCase()} en faenas y contratistas de todo Chile. Postula directo, sin registro y sin costo.`,
-    intro: `${c.intro} ${c.tip}`,
+    intro: c.intro,
     trail: [["Inicio", "/"], ["Empleos", "/empleos/"], [c.plural, null]],
     extraLinks: extra,
+    extraBlock: perfilHtml(c),
   }));
 }
 
@@ -461,7 +528,12 @@ for (const [c, list] of cargoPages) {
 }
 
 // 4) jobs.json con el campo "page" (para que el buscador enlace a cada oferta)
-const out = { ...data, jobs: (data.jobs || []).map((j) => { const { _slug, _title, _date, _cargo, ...rest } = j; return rest; }) };
+// También el cargo detectado ("Se busca: …"), para mostrarlo y enlazarlo en el buscador
+const out = { ...data, jobs: (data.jobs || []).map((j) => {
+  const { _slug, _title, _date, _cargo, ...rest } = j;
+  if (_cargo) rest.cargo = { slug: _cargo.slug, name: _cargo.name, page: hasCargoPage.has(_cargo.slug) };
+  return rest;
+}) };
 fs.writeFileSync(jobsPath, JSON.stringify(out, null, 0));
 
 // 5) sitemap.xml
@@ -473,6 +545,7 @@ const urls = [
   ...cargoPages.map(([c]) => [`${BASE}/empleos/${c.slug}`, today, "hourly", "0.8"]),
   [`${BASE}/guias.html`, null, "weekly", "0.7"],
   [`${BASE}/cv.html`, null, "monthly", "0.6"],
+  [`${BASE}/empresas.html`, null, "monthly", "0.5"],
   [`${BASE}/privacidad.html`, null, "yearly", "0.2"],
   ...jobs.map((j) => [BASE + j.page, isoDay(j._date), "weekly", "0.5"]),
 ];
