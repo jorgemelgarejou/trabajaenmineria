@@ -725,6 +725,15 @@ body[data-tab="crear"] .cv-tools .promo { order: 5; }
   .perfil-grid > div { break-inside: avoid; }
 }
 
+/* Atajos bajo la portada (visibles en celular) */
+.shortcuts { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 28px; }
+.shortcuts a { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 99px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-sm); color: var(--ink); font-weight: 600; font-size: .92rem; text-decoration: none; transition: box-shadow .2s, transform .2s; }
+.shortcuts a:hover { box-shadow: var(--shadow); transform: translateY(-1px); color: var(--accent-ink); }
+@media (max-width: 720px) {
+  .shortcuts { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
+  .shortcuts a { justify-content: center; padding: 12px 10px; font-size: .86rem; }
+}
+
 /* Videos tutoriales */
 .tut-grid { list-style: none; padding: 0; margin: 0 0 40px; display: grid; grid-template-columns: repeat(auto-fill, minmax(460px, 1fr)); gap: 16px; }
 .tut { display: grid; grid-template-columns: 200px 1fr; gap: 20px; align-items: start; padding: 18px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-sm); }
