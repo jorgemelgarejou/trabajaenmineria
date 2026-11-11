@@ -44,7 +44,17 @@
   }
   document.querySelectorAll(".ad-slot").forEach(fill);
 
-  if (cfg.mirrowUrl) document.querySelectorAll("a[data-mirrow]").forEach((a) => { a.href = cfg.mirrowUrl; });
+  // Mirrow: enlace con UTM por ubicación (data-mirrow="oferta", "tarjeta", "portada"…) y clic medido en Analytics
+  const mirrowBase = cfg.mirrowUrl || "https://www.mirrow.cl";
+  window.temMirrowUrl = function (where) {
+    const sep = mirrowBase.indexOf("?") >= 0 ? "&" : "?";
+    return mirrowBase + sep + "utm_source=trabajaenmineria&utm_medium=referral&utm_campaign=" + encodeURIComponent(where || "banner");
+  };
+  document.querySelectorAll("a[data-mirrow]").forEach((a) => { a.href = window.temMirrowUrl(a.dataset.mirrow); });
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest && e.target.closest("a[data-mirrow]");
+    if (a && window.track) window.track("click_mirrow", { ubicacion: a.dataset.mirrow || "banner", empresa: a.dataset.empresa || "" });
+  });
 
   // Anuncios entre ofertas solo si existe el bloque "listado" (o en la vista previa)
   window.TEM_ADS = { fill, enabled: preview || (!!client && !!slots.listado) };

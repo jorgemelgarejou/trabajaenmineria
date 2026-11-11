@@ -280,7 +280,12 @@
         ${j.region ? `<span class="tag">${esc(j.region)}</span>` : ""}
         <span>${esc(j.source || "")} ${d ? "· " + timeAgo(d) : ""}</span>
       </div>
-      <div class="apply-row"><a class="btn" href="${safeUrl(j.url)}" target="_blank" rel="noopener nofollow sponsored">Postular</a></div>`;
+      <div class="apply-row"><a class="btn" href="${safeUrl(j.url)}" target="_blank" rel="noopener nofollow sponsored">Postular</a></div>
+      <a class="mirrow-chip" data-mirrow="tarjeta" data-empresa="${esc(j.company || "")}" href="${esc((window.temMirrowUrl || (() => "https://www.mirrow.cl"))("tarjeta"))}" target="_blank" rel="noopener sponsored">
+        <img src="/media/mirrow-logo.png" width="22" height="21" alt="">
+        <span>${j.company && !/confidencial|reservad/i.test(j.company) ? `¿Conoces <b>${esc(j.company)}</b>? Revísala en Mirrow` : "Antes de postular, revisa la empresa en Mirrow"}</span>
+        <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>`;
 
     // Estadísticas (Google Analytics): cuántos postulan, guardan y comparten, por empresa y fuente
     const info = { empresa: j.company || "", fuente: j.source || "", region: j.region || "" };
