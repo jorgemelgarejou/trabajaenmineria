@@ -240,7 +240,7 @@ function page({ urlPath, title, description, body, ld = [], bodyClass = "" }) {
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/styles.css?v=20261110">${HEAD_SCRIPTS}
+  <link rel="stylesheet" href="/styles.css?v=20261111">${HEAD_SCRIPTS}
 ${ld.map((o) => `  <script type="application/ld+json">${jsonLd(o)}</script>`).join("\n")}
 </head>
 <body class="seo-page ${bodyClass}">
@@ -278,7 +278,7 @@ ${body}
     <a href="/cv.html"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M7 3h7l5 5v13H7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M14 3v5h5M10 13h6M10 17h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>CV con IA</a>
   </nav>
   <script src="/config.js"></script>
-  <script src="/ads.js"></script>
+  <script src="/ads.js?v=20261111"></script>
   <script src="/consent.js"></script>
   <script>
     document.querySelectorAll("[data-postular]").forEach(function (a) {
@@ -335,7 +335,7 @@ const sideCards = (extra = "") => `
       </aside>`;
 
 const mirrow = `
-        <a class="promo promo-compact" data-mirrow href="https://www.mirrow.cl" target="_blank" rel="noopener sponsored">
+        <a class="promo promo-compact" data-mirrow="postula-seguro" href="https://www.mirrow.cl" target="_blank" rel="noopener sponsored">
           <span class="promo-icon promo-logo" aria-hidden="true"><img src="/media/mirrow-logo.png" width="84" height="80" alt=""></span>
           <span class="promo-text"><small>Recomendado</small><b>Revisa la empresa antes de postular</b><span>Mirrow te ayuda a tomar mejores decisiones, para empresas y personas.</span></span>
         </a>`;
@@ -404,6 +404,15 @@ for (const j of jobs) {
             <a class="btn btn-lg" data-postular data-empresa="${esc(company)}" data-fuente="${esc(j.source || "")}" data-region="${esc(j.region || "")}" href="${esc(j.url)}" target="_blank" rel="noopener nofollow">Postular en ${esc(sourceName)} ${ICON.ext}</a>
             <span>Sin registro en este sitio y sin costo.</span>
           </div>
+          <a class="mirrow-check" data-mirrow="oferta" data-empresa="${esc(company)}" href="https://www.mirrow.cl/?utm_source=trabajaenmineria&amp;utm_medium=referral&amp;utm_campaign=oferta" target="_blank" rel="noopener sponsored">
+            <span class="mirrow-check-logo"><img src="/media/mirrow-logo.png" width="84" height="80" alt=""></span>
+            <span class="mirrow-check-text">
+              <small>Antes de postular</small>
+              <b>${company && !/confidencial|reservad/i.test(company) ? `¿Conoces ${esc(company)}? Revísala en Mirrow` : "¿Conoces a esta empresa? Revísala en Mirrow"}</b>
+              <span>Revisa empresas por RUT y toma una mejor decisión.</span>
+            </span>
+            <span class="mirrow-check-cta">Revisar <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </a>
         </article>
         ${j._cargo ? `
         <div class="job-tips">${perfilHtml(j._cargo)}
