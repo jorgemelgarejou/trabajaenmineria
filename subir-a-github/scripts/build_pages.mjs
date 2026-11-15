@@ -349,6 +349,35 @@ function write(rel, html) {
 for (const dir of ["oferta", "empleos", "recursos"]) fs.rmSync(path.join(SITE, dir), { recursive: true, force: true });
 const RECURSOS_URLS = [];
 
+// Campos opcionales de JobPosting (employmentType, baseSalary): solo cuando la oferta los dice
+// explícitamente. Nunca se inventan; si no hay dato, el campo se omite (Google lo trata como sugerencia).
+const EMPLEO_TIPOS = [
+  ["INTERN", /\bpr[aá]ctica|\bpracticante|\btrainee\b/i],
+  ["PART_TIME", /part[\s-]?time|media jornada|jornada parcial/i],
+  ["CONTRACTOR", /honorarios|freelance/i],
+  ["TEMPORARY", /plazo fijo|\btemporal\b|reemplazo|por obra|faena determinada/i],
+  ["FULL_TIME", /full[\s-]?time|jornada completa|tiempo completo|indefinid|\b(?!4\s?x\s?[24]\b|6\s?x\s?[46]\b)\d{1,2}\s?x\s?\d{1,2}\b/i], // turnos 7x7, 14x14, 4x3 (no camionetas 4x4)
+];
+function jobExtrasLd(j, desc) {
+  const out = {};
+  const text = `${j._title} ${desc}`;
+  const tipos = EMPLEO_TIPOS.filter(([, re]) => re.test(text)).map(([t]) => t);
+  if (tipos.length) out.employmentType = tipos.length === 1 ? tipos[0] : tipos;
+  // Sueldo: "$1.200.000", "1.200.000 - 1.500.000", "$ 900000 líquido"; solo pesos chilenos y montos razonables
+  const nums = String(j.salary || "").match(/\d{1,3}(?:\.\d{3})+|\d{6,8}/g);
+  if (nums) {
+    const vals = nums.map((n) => Number(n.replace(/\./g, ""))).filter((n) => n >= 300000 && n <= 30000000);
+    if (vals.length) {
+      const min = Math.min(...vals), max = Math.max(...vals);
+      out.baseSalary = {
+        "@type": "MonetaryAmount", currency: "CLP",
+        value: { "@type": "QuantitativeValue", ...(min === max ? { value: min } : { minValue: min, maxValue: max }), unitText: "MONTH" },
+      };
+    }
+  }
+  return out;
+}
+
 // 1) Una página por oferta
 for (const j of jobs) {
   const desc = clean(j.description);
@@ -379,6 +408,7 @@ for (const j of jobs) {
       validThrough: valid.toISOString(),
       hiringOrganization: { "@type": "Organization", name: company || "Confidencial" },
       jobLocation: { "@type": "Place", address: { "@type": "PostalAddress", addressLocality: j.location || j.region || "Chile", ...(j.region ? { addressRegion: j.region } : {}), addressCountry: "CL" } },
+      ...jobExtrasLd(j, desc),
       directApply: false,
       url: BASE + j.page,
     });
