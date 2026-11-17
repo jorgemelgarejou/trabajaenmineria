@@ -40,4 +40,13 @@ window.TEM_CONFIG = {
   //   url: "https://www.ejemplo.cl/curso", logo: "/media/patrocinio-ejemplo.png",
   //   espacios: ["lateral", "pie"], desde: "2026-12-01", hasta: "2026-12-31" },
   patrocinios: [],
+  // Cursos de OTEC y escuelas asociadas (página /cursos, guías y perfiles de cargo), con enlace de referido.
+  // categoria: licencias | seguridad | oficios | seguridad-privada | mineria
+  // cargos (opcional): perfiles donde también aparece (operador-de-equipos, conductor-y-chofer, sin-experiencia…)
+  // Los clics se miden en Analytics como "click_curso" y el enlace lleva UTM (utm_medium=referido).
+  // Ejemplo (copiar, completar y quitar las barras //):
+  // { otec: "Escuela Ejemplo", nombre: "Licencia clase D", categoria: "licencias", cargos: ["operador-de-equipos"],
+  //   url: "https://www.ejemplo.cl/licencia-d?ref=tem", modalidad: "Presencial", ciudad: "Antofagasta",
+  //   duracion: "3 semanas", precio: "$250.000", sence: "", logo: "", desde: "", hasta: "" },
+  cursos: [],
 };
