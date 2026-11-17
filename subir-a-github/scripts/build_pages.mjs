@@ -13,6 +13,7 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
+import { guiasLargas } from "./guias_largas.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const SITE = path.join(ROOT, "site");
@@ -28,6 +29,7 @@ const clean = (s) => String(s || "").replace(/\s+/g, " ").replace(/\s?\?\s(?=[A-
 const MESES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sept", "oct", "nov", "dic"];
 const fecha = (d) => `${d.getUTCDate()} ${MESES[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
 const isoDay = (d) => d.toISOString().slice(0, 10);
+const n = (x) => Number(x || 0).toLocaleString("es-CL");
 
 // Título con mayúscula inicial (algunos portales los publican en MAYÚSCULAS)
 function prettyTitle(t) {
@@ -240,7 +242,7 @@ function page({ urlPath, title, description, body, ld = [], bodyClass = "" }) {
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/styles.css?v=20261117">${HEAD_SCRIPTS}
+  <link rel="stylesheet" href="/styles.css?v=20261118">${HEAD_SCRIPTS}
 ${ld.map((o) => `  <script type="application/ld+json">${jsonLd(o)}</script>`).join("\n")}
 </head>
 <body class="seo-page ${bodyClass}">
@@ -278,7 +280,7 @@ ${body}
     <a href="/cv.html"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M7 3h7l5 5v13H7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M14 3v5h5M10 13h6M10 17h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>CV con IA</a>
   </nav>
   <script src="/config.js"></script>
-  <script src="/ads.js?v=20261117"></script>
+  <script src="/ads.js?v=20261118"></script>
   <script src="/consent.js"></script>
   <script>
     document.querySelectorAll("[data-postular]").forEach(function (a) {
@@ -768,6 +770,158 @@ const FICHAS = {
   RECURSOS_URLS.push(`${BASE}/recursos/`, ...fichas.map((c) => `${BASE}/recursos/${c.slug}`));
 }
 
+// 3b) Cifras del día: guías largas (/guias/<slug>) e informe del empleo minero
+const GUIAS_URLS = [];
+{
+  const txt = (j) => `${j._title} ${clean(j.description)}`;
+  const count = (re) => jobs.filter((j) => re.test(txt(j))).length;
+  const turnos = {
+    "7x7": count(/\b7\s?x\s?7\b/i), "14x14": count(/\b14\s?x\s?14\b/i), "4x3": count(/\b4\s?x\s?3\b/i),
+    "4x4": count(/turno[^.]{0,15}\b4\s?x\s?4\b/i), "5x2": count(/\b5\s?x\s?2\b/i),
+  };
+  turnos.otros = count(/\b(10\s?x\s?10|8\s?x\s?6|8\s?x\s?7|10\s?x\s?5|6\s?x\s?1|7\s?x\s?14|20\s?x\s?10)\b/i);
+  const topBy = (key, k = 10) => [...jobs.reduce((m, j) => { const v = key(j); if (v) m.set(v, (m.get(v) || 0) + 1); return m; }, new Map())].sort((a, b) => b[1] - a[1]).slice(0, k);
+  const S = {
+    total: jobs.length, turnos,
+    sinExp: (byCargo.get("sin-experiencia") || []).length || count(/sin experiencia/i),
+    licencia: count(/licencia/i),
+    semana: jobs.filter((j) => updated - j._date <= 7 * 864e5).length,
+    regiones: regionPages.map(([r, l]) => [r, l.length]),
+    cargos: CARGOS.map((c) => [c, (byCargo.get(c.slug) || []).length]).filter(([, v]) => v).sort((a, b) => b[1] - a[1]),
+    empresas: topBy((j) => (j.company && !/confidencial|reservad/i.test(j.company) ? j.company.trim() : ""), 12).filter(([, v]) => v >= 2),
+    fuentes: topBy((j) => j.source || "", 8),
+  };
+  const guias = guiasLargas(S);
+  const hoy = fecha(updated);
+  const otras = (slug) => guias.filter((g) => g.slug !== slug).map((g) => `
+          <li><a href="/guias/${g.slug}"><small>${esc(g.tag)}</small><b>${esc(g.title)}</b></a></li>`).join("");
+  for (const g of guias) {
+    const urlPath = `/guias/${g.slug}`;
+    const trail = [["Inicio", "/"], ["Guías", "/guias.html"], [g.tag, null]];
+    const body = `
+  <section class="cv-hero seo-hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="wrap">${crumbs(trail)}
+      <span class="eyebrow"><span class="pulse"></span> ${esc(g.tag)} · actualizado ${hoy}</span>
+      <h1>${esc(g.title)}</h1>
+      <p class="lead">${esc(g.lead)}</p>
+    </div>
+  </section>
+  <main class="wrap guides" id="contenido">
+    <article class="guide-long">${g.body}
+      <h2>Preguntas frecuentes</h2>
+      <dl class="faq">${g.faq.map(([q, a]) => `<dt>${esc(q)}</dt><dd>${esc(a)}</dd>`).join("")}</dl>
+      <div class="ad-slot ad-wide" data-slot="guias"><span class="ad-label">Publicidad</span><div class="ad-box" data-size="728 × 90"></div></div>
+      <div class="guide-cta">
+        <div><b>${n(S.total)} ofertas de minería hoy</b><span>Gratis y sin registro: postulas directo en la publicación original.</span></div>
+        <a class="btn" href="/#ofertas">Ver ofertas</a>
+      </div>
+    </article>
+    <section>
+      <div class="sec-head"><h2>Más guías</h2></div>
+      <ul class="guide-list">${otras(g.slug)}
+          <li><a href="/informe-empleo-minero"><small>Datos</small><b>Informe del empleo minero en Chile hoy</b></a></li>
+      </ul>
+    </section>
+  </main>`;
+    const ld = [crumbsLd(trail), {
+      "@context": "https://schema.org", "@type": "Article", headline: g.title, description: g.description,
+      dateModified: updated.toISOString(), inLanguage: "es-CL", mainEntityOfPage: BASE + urlPath,
+      author: { "@type": "Organization", name: "Trabaja en Minería", url: BASE },
+      publisher: { "@type": "Organization", name: "Trabaja en Minería", logo: { "@type": "ImageObject", url: `${BASE}/logo-mark.svg` } },
+      image: `${BASE}/media/poster.jpg`,
+    }, {
+      "@context": "https://schema.org", "@type": "FAQPage",
+      mainEntity: g.faq.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })),
+    }];
+    write(`guias/${g.slug}.html`, page({ urlPath, title: `${g.title} | Trabaja en Minería`, description: g.description, body, ld }));
+    GUIAS_URLS.push(BASE + urlPath);
+  }
+
+  // Informe del empleo minero (cifras propias del día)
+  const max = (l) => Math.max(1, ...l.map(([, v]) => v));
+  const bars = (rows, href) => {
+    const m = max(rows);
+    return `<ul class="bars">${rows.map(([k, v]) => `
+          <li><span class="bar-k">${href ? `<a href="${esc(href(k))}">${esc(k)}</a>` : esc(k)}</span><span class="bar-v"><i style="width:${Math.max(2, Math.round(100 * v / m))}%"></i><b>${n(v)}</b></span></li>`).join("")}
+        </ul>`;
+  };
+  const cargoRows = S.cargos.map(([c, v]) => [c.name, v, c.slug]);
+  const turnoRows = [["7x7", turnos["7x7"]], ["14x14", turnos["14x14"]], ["4x3", turnos["4x3"]], ["5x2", turnos["5x2"]], ["4x4", turnos["4x4"]], ["Otros (10x10, 8x6…)", turnos.otros]].filter(([, v]) => v);
+  const top = S.regiones[0];
+  const urlPath = "/informe-empleo-minero";
+  const trail = [["Inicio", "/"], ["Informe del empleo minero", null]];
+  const body = `
+  <section class="cv-hero seo-hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="wrap">${crumbs(trail)}
+      <span class="eyebrow"><span class="pulse"></span> Datos propios · actualizado ${hoy}</span>
+      <h1>Empleo minero en Chile <span class="grad">hoy, en cifras.</span></h1>
+      <p class="lead">Cuántas ofertas de minería hay publicadas, en qué regiones, para qué cargos y con qué turnos. Calculado cada 2 horas con las ofertas que reúne trabajaenmineria.cl.</p>
+      <dl class="stats stats-inline">
+        <div><dt>Ofertas activas</dt><dd>${n(S.total)}</dd></div>
+        <div><dt>Publicadas en 7 días</dt><dd>${n(S.semana)}</dd></div>
+        <div><dt>Región con más ofertas</dt><dd>${top ? esc(top[0]) : "—"}</dd></div>
+      </dl>
+    </div>
+  </section>
+  <main class="wrap guides" id="contenido">
+    <article class="guide-long">
+      <h2>Lo más importante de hoy</h2>
+      <ul>
+        ${top ? `<li><b>${esc(top[0])}</b> concentra <b>${n(top[1])}</b> ofertas, el ${Math.round(100 * top[1] / Math.max(1, S.total))} % del total.</li>` : ""}
+        ${cargoRows[0] ? `<li>El cargo con más ofertas es <b>${esc(cargoRows[0][0].toLowerCase())}</b> (${n(cargoRows[0][1])}), seguido de ${cargoRows.slice(1, 3).map(([k, v]) => `${esc(k.toLowerCase())} (${n(v)})`).join(" y ")}.</li>` : ""}
+        <li>El turno más mencionado es el <b>7x7</b>, en ${n(turnos["7x7"])} ofertas. <a href="/guias/turnos-mineros">¿Qué significa cada turno?</a></li>
+        <li>${n(S.sinExp)} ofertas son para cargos de inicio o sin experiencia. <a href="/guias/entrar-a-la-mineria-sin-experiencia">Cómo entrar sin experiencia</a>.</li>
+        <li>${n(S.licencia)} ofertas piden alguna licencia de conducir. <a href="/guias/licencias-y-cursos-para-mineria">Licencias y cursos</a>.</li>
+      </ul>
+
+      <h2>Ofertas por región</h2>
+      ${bars(S.regiones, (r) => regionUrl(r))}
+
+      <h2>Ofertas por tipo de cargo</h2>
+      ${bars(cargoRows.map(([k, v]) => [k, v]), (k) => `/empleos/${(cargoRows.find((r) => r[0] === k) || [])[2]}`)}
+
+      <h2>Turnos mencionados en las ofertas</h2>
+      ${bars(turnoRows)}
+      <p class="note">Solo cuenta las ofertas que indican el turno en el título o la descripción.</p>
+
+      ${S.empresas.length ? `<h2>Empresas con más ofertas publicadas</h2>
+      ${bars(S.empresas)}
+      <p class="note">Muchas ofertas se publican sin el nombre de la empresa (confidenciales) y no aparecen aquí. Antes de postular, puedes <a href="https://www.mirrow.cl?utm_source=trabajaenmineria&amp;utm_medium=referral&amp;utm_campaign=informe" data-mirrow="informe" target="_blank" rel="noopener">revisar cualquier empresa por su RUT en Mirrow</a>.</p>` : ""}
+
+      <h2>De dónde vienen las ofertas</h2>
+      ${bars(S.fuentes)}
+
+      <h2>Cómo se calcula</h2>
+      <p>Cada 2 horas revisamos portales de empleo y los portales de empleo de empresas mineras, quitamos duplicados y dejamos solo las ofertas relacionadas con minería publicadas en los últimos días. El cargo y la región se asignan automáticamente a partir del título y la ubicación de cada oferta, por lo que las cifras son una aproximación. Puedes citar este informe enlazando a esta página.</p>
+      <div class="ad-slot ad-wide" data-slot="guias"><span class="ad-label">Publicidad</span><div class="ad-box" data-size="728 × 90"></div></div>
+      <div class="guide-cta">
+        <div><b>${n(S.total)} ofertas esperando postulantes</b><span>Busca por región, cargo, turno y fecha.</span></div>
+        <a class="btn" href="/#ofertas">Buscar ofertas</a>
+      </div>
+    </article>
+    <section>
+      <div class="sec-head"><h2>Guías para postular mejor</h2></div>
+      <ul class="guide-list">${otras("")}
+      </ul>
+    </section>
+  </main>`;
+  write("informe-empleo-minero.html", page({
+    urlPath, body,
+    title: `Empleo minero en Chile hoy: ${n(S.total)} ofertas por región, cargo y turno | Trabaja en Minería`,
+    description: `Cifras actualizadas del empleo en minería en Chile: ${n(S.total)} ofertas activas, ${top ? `${n(top[1])} en ${top[0]}, ` : ""}cargos más buscados, turnos más comunes y empresas que más publican.`,
+    ld: [crumbsLd(trail), {
+      "@context": "https://schema.org", "@type": "Dataset", name: "Ofertas de empleo en minería en Chile",
+      description: "Conteo diario de ofertas de empleo en minería publicadas en Chile, por región, tipo de cargo, turno, empresa y fuente.",
+      url: BASE + urlPath, dateModified: updated.toISOString(), inLanguage: "es-CL", isAccessibleForFree: true,
+      creator: { "@type": "Organization", name: "Trabaja en Minería", url: BASE }, spatialCoverage: "Chile",
+      variableMeasured: ["Ofertas por región", "Ofertas por cargo", "Turnos", "Empresas", "Fuentes"],
+    }],
+  }));
+  GUIAS_URLS.push(BASE + urlPath);
+}
+
 // 4) jobs.json con el campo "page" (para que el buscador enlace a cada oferta)
 // También el cargo detectado ("Se busca: …"), para mostrarlo y enlazarlo en el buscador
 const out = { ...data, jobs: (data.jobs || []).map((j) => {
@@ -789,6 +943,7 @@ const urls = [
   [`${BASE}/empresas.html`, null, "monthly", "0.5"],
   [`${BASE}/tutoriales.html`, null, "monthly", "0.6"],
   ...RECURSOS_URLS.map((u) => [u, today, "weekly", "0.7"]),
+  ...GUIAS_URLS.map((u) => [u, today, "daily", "0.8"]),
   [`${BASE}/privacidad.html`, null, "yearly", "0.2"],
   ...jobs.map((j) => [BASE + j.page, isoDay(j._date), "weekly", "0.5"]),
 ];
