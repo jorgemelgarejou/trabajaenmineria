@@ -14,6 +14,7 @@ import path from "node:path";
 import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { guiasLargas } from "./guias_largas.mjs";
+import { CURSOS_CATS } from "./cursos_data.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const SITE = path.join(ROOT, "site");
@@ -242,7 +243,7 @@ function page({ urlPath, title, description, body, ld = [], bodyClass = "" }) {
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/styles.css?v=20261118">${HEAD_SCRIPTS}
+  <link rel="stylesheet" href="/styles.css?v=20261119">${HEAD_SCRIPTS}
 ${ld.map((o) => `  <script type="application/ld+json">${jsonLd(o)}</script>`).join("\n")}
 </head>
 <body class="seo-page ${bodyClass}">
@@ -270,7 +271,7 @@ ${body}
         <a class="brand" href="/"><img src="/logo-mark.svg" width="28" height="28" alt=""><span class="word">trabajaen<b>minería</b><i>.cl</i></span></a>
         <p>Reunimos ofertas de minería publicadas en portales de empleo de todo Chile. Sin registro: al postular vas directo a la fuente original. Nunca cobramos a los postulantes.</p>
       </div>
-      <p class="foot-links"><a href="/#ofertas">Ofertas</a><a href="/empleos/">Por región y cargo</a><a href="/guias.html">Guías</a><a href="/recursos/">Centro de recursos</a><a href="/tutoriales.html">Tutoriales</a><a href="/cv.html">CV con IA</a><a href="/empresas.html">Para empresas</a><a href="/privacidad.html">Privacidad y cookies</a><a href="#" data-cookies>Preferencias de cookies</a><span>© ${updated.getUTCFullYear()} trabajaenmineria.cl</span></p>
+      <p class="foot-links"><a href="/#ofertas">Ofertas</a><a href="/empleos/">Por región y cargo</a><a href="/guias.html">Guías</a><a href="/recursos/">Centro de recursos</a><a href="/cursos">Cursos y licencias</a><a href="/tutoriales.html">Tutoriales</a><a href="/cv.html">CV con IA</a><a href="/empresas.html">Para empresas</a><a href="/privacidad.html">Privacidad y cookies</a><a href="#" data-cookies>Preferencias de cookies</a><span>© ${updated.getUTCFullYear()} trabajaenmineria.cl</span></p>
     </div>
   </footer>
   <nav class="bottom-nav" aria-label="Navegación principal">
@@ -280,7 +281,8 @@ ${body}
     <a href="/cv.html"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M7 3h7l5 5v13H7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M14 3v5h5M10 13h6M10 17h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>CV con IA</a>
   </nav>
   <script src="/config.js"></script>
-  <script src="/ads.js?v=20261118"></script>
+  <script src="/ads.js?v=20261119"></script>
+  <script src="/cursos.js?v=20261119"></script>
   <script src="/consent.js"></script>
   <script>
     document.querySelectorAll("[data-postular]").forEach(function (a) {
@@ -694,6 +696,16 @@ const FICHAS = {
           <p>Gratis, sin registro y con sugerencias de palabras clave para ${esc(c.name.toLowerCase())}.</p>
           <a class="btn" href="/cv.html">Crear mi CV</a>
         </div>
+        <div class="card cursos-side" data-cursos="ficha-${c.slug}" data-cargo="${c.slug}" data-max="3" hidden>
+          <h3>Cursos recomendados</h3>
+          <div class="curso-grid"></div>
+          <p class="curso-nota">Enlaces de referido. <a href="/cursos">Ver todos los cursos</a></p>
+        </div>
+        <div class="card">
+          <h3>Cursos y licencias</h3>
+          <p>${esc(CURSOS_CATS.filter((k) => k.cargos.includes(c.slug)).map((k) => k.nombre.toLowerCase()).slice(0, 2).join(" y ") || "Licencias, seguridad y oficios")}: qué sirve para este cargo.</p>
+          <a class="more share-li" href="/cursos${(CURSOS_CATS.find((k) => k.cargos.includes(c.slug)) || { id: "" }).id ? "#" + CURSOS_CATS.find((k) => k.cargos.includes(c.slug)).id : ""}">Ver cursos</a>
+        </div>
         <div class="card">
           <h3>Otros perfiles</h3>
           <ul class="links">${fichas.filter((o) => o !== c).map((o) => `<li><a href="/recursos/${o.slug}">${esc(o.name)}</a></li>`).join("")}</ul>
@@ -746,6 +758,7 @@ const FICHAS = {
         <li><a href="/tutoriales.html"><b>Videos tutoriales</b><span>Busca, postula y arma tu CV</span></a></li>
         <li><a href="/guias.html"><b>Guías y noticias</b><span>Turnos, licencias, exámenes</span></a></li>
         <li><a href="/cv.html"><b>CV para minería</b><span>Gratis y sin registro</span></a></li>
+        <li><a href="/cursos"><b>Cursos y licencias</b><span>Clase D, A5, altura, rigger, OS-10</span></a></li>
         <li><a href="/guias.html#guia-estafas"><b>Ofertas falsas</b><span>Cómo reconocerlas</span></a></li>
       </ul>
     </section>
@@ -772,6 +785,11 @@ const FICHAS = {
 
 // 3b) Cifras del día: guías largas (/guias/<slug>) e informe del empleo minero
 const GUIAS_URLS = [];
+const GUIA_CURSOS = {
+  "licencias-y-cursos-para-mineria": ["licencias", "seguridad", "oficios"],
+  "entrar-a-la-mineria-sin-experiencia": ["licencias", "seguridad", "seguridad-privada", "mineria"],
+  "turnos-mineros": ["licencias", "seguridad"],
+};
 {
   const txt = (j) => `${j._title} ${clean(j.description)}`;
   const count = (re) => jobs.filter((j) => re.test(txt(j))).length;
@@ -808,7 +826,13 @@ const GUIAS_URLS = [];
     </div>
   </section>
   <main class="wrap guides" id="contenido">
-    <article class="guide-long">${g.body}
+    <article class="guide-long">${g.body}${GUIA_CURSOS[g.slug] ? `
+      <section class="cursos-box" data-cursos="guia-${g.slug}" data-cat="${GUIA_CURSOS[g.slug].join(",")}" data-max="4" hidden>
+        <h2>Cursos recomendados</h2>
+        <div class="curso-grid"></div>
+        <p class="curso-nota" hidden>Enlaces de referido: si te inscribes, la OTEC o escuela puede pagarnos una comisión. A ti no te cuesta más. <a href="/cursos">Ver todos los cursos</a>.</p>
+      </section>
+      <p class="note">¿Buscas dónde estudiar? Revisa la <a href="/cursos">guía de cursos y licencias para minería</a>.</p>` : ""}
       <h2>Preguntas frecuentes</h2>
       <dl class="faq">${g.faq.map(([q, a]) => `<dt>${esc(q)}</dt><dd>${esc(a)}</dd>`).join("")}</dl>
       <div class="ad-slot ad-wide" data-slot="guias"><span class="ad-label">Publicidad</span><div class="ad-box" data-size="728 × 90"></div></div>
@@ -835,6 +859,69 @@ const GUIAS_URLS = [];
       mainEntity: g.faq.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })),
     }];
     write(`guias/${g.slug}.html`, page({ urlPath, title: `${g.title} | Trabaja en Minería`, description: g.description, body, ld }));
+    GUIAS_URLS.push(BASE + urlPath);
+  }
+
+  // Cursos y licencias (/cursos): información propia por categoría + tarjetas de OTEC asociadas (cursos.js)
+  {
+    const urlPath = "/cursos";
+    const trail = [["Inicio", "/"], ["Cursos y licencias", null]];
+    const cargoName = (s) => (CARGOS.find((c) => c.slug === s) || {}).name || s;
+    const body = `
+  <section class="cv-hero seo-hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="wrap">${crumbs(trail)}
+      <span class="eyebrow"><span class="pulse"></span> Licencias · seguridad · oficios</span>
+      <h1>Cursos y licencias <span class="grad">para trabajar en minería.</span></h1>
+      <p class="lead">Qué curso te sirve según el cargo al que apuntas, cuánto suele durar y qué revisar antes de pagar. Hoy ${n(S.licencia)} ofertas piden alguna licencia de conducir.</p>
+      <nav class="shortcuts" aria-label="Categorías">${CURSOS_CATS.map((k) => `<a href="#${k.id}"><span aria-hidden="true">${k.icono}</span>${esc(k.nombre)}</a>`).join("")}</nav>
+    </div>
+  </section>
+  <main class="wrap guides" id="contenido">
+    <article class="guide-long">
+      <h2>Antes de pagar un curso</h2>
+      <ul class="flags">
+        <li>✅ Comprueba que el organismo (OTEC) esté registrado en <a href="https://sence.gob.cl" target="_blank" rel="noopener">SENCE</a> y pregunta si el curso tiene código SENCE.</li>
+        <li>✅ Pide el programa: horas, contenidos, si hay práctica y qué certificado entregan.</li>
+        <li>✅ Para licencias, confirma los requisitos vigentes en <a href="https://www.conaset.cl" target="_blank" rel="noopener">CONASET</a> o en tu municipalidad.</li>
+        <li>🚩 Desconfía de "curso + contrato asegurado" o de quien te pide pagar para quedar en una lista de contratación. Puedes <a href="https://www.mirrow.cl?utm_source=trabajaenmineria&amp;utm_medium=referral&amp;utm_campaign=cursos" data-mirrow="cursos" target="_blank" rel="noopener">revisar la empresa por su RUT en Mirrow</a>.</li>
+      </ul>
+    </article>
+    ${CURSOS_CATS.map((k) => `
+    <section class="curso-cat" id="${k.id}">
+      <div class="sec-head"><h2><span aria-hidden="true">${k.icono}</span> ${esc(k.nombre)}</h2><p>${esc(k.intro)}</p></div>
+      <div class="table-wrap"><table class="data-table">
+        <thead><tr><th>Curso</th><th>Para qué sirve</th><th>Duración habitual</th></tr></thead>
+        <tbody>${k.cursos.map((c) => `<tr><td><b>${esc(c.nombre)}</b></td><td>${esc(c.para)}</td><td>${esc(c.duracion)}</td></tr>`).join("")}</tbody>
+      </table></div>
+      <p class="note">Útil para: ${k.cargos.map((s) => `<a href="/recursos/${s}">${esc(cargoName(s).toLowerCase())}</a>`).join(", ")}.</p>
+      <div class="cursos-box" data-cursos="cursos-${k.id}" data-cat="${k.id}" data-vacio="otec" hidden>
+        <h3>Dónde estudiar</h3>
+        <div class="curso-grid"></div>
+        <p class="curso-nota" hidden>Enlaces de referido: si te inscribes, la OTEC o escuela puede pagarnos una comisión. A ti no te cuesta más.</p>
+        <p class="curso-vacio" hidden>Pronto sumaremos OTEC y escuelas verificadas para esta categoría. ¿Dictas estos cursos? <a href="/empresas.html#anunciar">Publícalos aquí</a>.</p>
+      </div>
+    </section>`).join("")}
+    <div class="ad-slot ad-wide" data-slot="guias"><span class="ad-label">Publicidad</span><div class="ad-box" data-size="728 × 90"></div></div>
+    <section>
+      <div class="sec-head"><h2>Sigue preparándote</h2></div>
+      <ul class="guide-list">
+        <li><a href="/guias/licencias-y-cursos-para-mineria"><small>Guía</small><b>Licencias clase D, A4, A5 y cursos que piden</b></a></li>
+        <li><a href="/guias/entrar-a-la-mineria-sin-experiencia"><small>Guía</small><b>Cómo entrar a la minería sin experiencia</b></a></li>
+        <li><a href="/recursos/"><small>Centro de recursos</small><b>Perfiles de cargo: qué piden y cómo crecer</b></a></li>
+        <li><a href="/cv.html"><small>Herramienta</small><b>Arma tu CV para minería gratis</b></a></li>
+      </ul>
+    </section>
+  </main>`;
+    write("cursos.html", page({
+      urlPath, body,
+      title: "Cursos y licencias para trabajar en minería: clase D, A5, altura, rigger y OS-10 | Trabaja en Minería",
+      description: "Qué cursos y licencias sirven para trabajar en minería en Chile: licencia clase D y A5, trabajo en altura, aislamiento y bloqueo, rigger, soldadura, OS-10. Duración y qué revisar antes de pagar.",
+      ld: [crumbsLd(trail), {
+        "@context": "https://schema.org", "@type": "ItemList", name: "Cursos y licencias para trabajar en minería",
+        itemListElement: CURSOS_CATS.flatMap((k) => k.cursos).map((c, i) => ({ "@type": "ListItem", position: i + 1, name: c.nombre, description: c.para })),
+      }],
+    }));
     GUIAS_URLS.push(BASE + urlPath);
   }
 
