@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Para empresas: publica gratis tus ofertas mineras — Trabaja en Minería</title>
-  <meta name="description" content="¿Tu empresa busca operadores, mantenedores, eléctricos o prevencionistas para minería? Tus ofertas pueden aparecer gratis en trabajaenmineria.cl, el buscador de empleo minero de Chile.">
+  <meta name="description" content="¿Tu empresa busca operadores, mantenedores, eléctricos o prevencionistas para minería? Publica gratis tus ofertas en trabajaenmineria.cl o anuncia tu curso, servicio o marca frente a quienes buscan trabajo en minería.">
   <meta name="theme-color" content="#fbfbfd" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
   <meta name="color-scheme" content="light dark">
@@ -17,7 +17,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20261111">
+  <link rel="stylesheet" href="styles.css?v=20261117">
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("consent","default",{analytics_storage:"denied",ad_storage:"denied",ad_user_data:"denied",ad_personalization:"denied",wait_for_update:500});try{if(localStorage.getItem("tem:consent")==="si")gtag("consent","update",{analytics_storage:"granted",ad_storage:"granted",ad_user_data:"granted",ad_personalization:"granted"});}catch(e){}</script>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6612125908838011" crossorigin="anonymous"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-KFSJVX6SV7"></script>
@@ -93,6 +93,54 @@
       </div>
     </section>
 
+    <section id="anunciar">
+      <div class="sec-head">
+        <h2>Anúnciate frente a quienes buscan trabajo en minería</h2>
+        <p>Publicar ofertas es gratis. Si además quieres destacar tu marca, curso o servicio, tenemos espacios patrocinados con medición de clics.</p>
+      </div>
+      <ul class="audience" aria-label="Para quién es">
+        <li>OTEC y centros de capacitación</li>
+        <li>Empresas de reclutamiento</li>
+        <li>Contratistas mineros</li>
+        <li>Ropa de trabajo y EPP</li>
+        <li>Exámenes preocupacionales</li>
+        <li>Licencias de conducir</li>
+      </ul>
+      <ul class="plans">
+        <li class="plan-top">
+          <small>Más visible</small>
+          <b>Banner destacado</b>
+          <span>Tu aviso en la portada y en las páginas de cada oferta, junto al listado.</span>
+          <ul><li>Columna lateral y final del listado</li><li>Logo, título, texto y botón</li><li>Enlace directo a tu sitio</li></ul>
+        </li>
+        <li>
+          <small>Entre las ofertas</small>
+          <b>Aviso en el listado</b>
+          <span>Aparece entre las ofertas, con el mismo formato, justo donde la gente decide a qué postular.</span>
+          <ul><li>Ideal para cursos y reclutamiento</li><li>Marcado como "Patrocinado"</li></ul>
+        </li>
+        <li>
+          <small>Para quienes se preparan</small>
+          <b>Guías y CV con IA</b>
+          <span>Tu marca en las guías para entrar a la minería y en el creador de CV.</span>
+          <ul><li>Público que está postulando</li><li>Ideal para capacitación y licencias</li></ul>
+        </li>
+      </ul>
+      <ol class="steps-list">
+        <li><b>Nos escribes</b><span>Cuéntanos qué quieres promocionar y por cuánto tiempo. Te proponemos espacio y precio.</span></li>
+        <li><b>Publicamos tu aviso</b><span>Lo dejamos en línea en el mismo día, con tu logo y enlace.</span></li>
+        <li><b>Te informamos los resultados</b><span>Cada clic se mide. Al cierre te enviamos cuántas veces se vio tu aviso y cuántos clics recibió.</span></li>
+      </ol>
+      <div class="contact-box">
+        <div>
+          <h3>Quiero anunciar</h3>
+          <p>Escríbenos y te respondemos con los espacios disponibles. Los avisos patrocinados siempre se identifican como tales.</p>
+        </div>
+        <a class="btn btn-lg contact-ad" href="#" hidden>Escríbenos</a>
+        <p class="contact-soon contact-ad-soon">Muy pronto habilitaremos el contacto directo para anunciantes.</p>
+      </div>
+    </section>
+
     <section>
       <div class="sec-head">
         <h2>Antes de contratar, decide con datos</h2>
@@ -130,18 +178,27 @@
   </nav>
 
   <script src="config.js"></script>
-  <script src="ads.js?v=20261111"></script>
+  <script src="ads.js?v=20261117"></script>
   <script>
     (function () {
       var cfg = window.TEM_CONFIG || {};
-      // Contacto: solo si hay un correo configurado en config.js
-      if (cfg.contactoEmpresas) {
-        var b = document.getElementById("contact-btn");
-        b.href = "mailto:" + cfg.contactoEmpresas + "?subject=" + encodeURIComponent("Sumar mi empresa a Trabaja en Minería");
-        b.hidden = false;
-        document.getElementById("contact-soon").hidden = true;
-        b.addEventListener("click", function () { window.track && track("contacto_empresa"); });
+      // Contacto: correo si está configurado en config.js; si no, mensaje directo por Instagram
+      var ig = /^[a-z0-9._]+$/i.test(cfg.contactoInstagram || "") ? cfg.contactoInstagram : "";
+      function contacto(btn, soon, asunto, evento) {
+        if (!btn || (!cfg.contactoEmpresas && !ig)) return;
+        if (cfg.contactoEmpresas) {
+          btn.href = "mailto:" + cfg.contactoEmpresas + "?subject=" + encodeURIComponent(asunto);
+        } else {
+          btn.href = "https://ig.me/m/" + ig;
+          btn.target = "_blank"; btn.rel = "noopener";
+          btn.textContent = "Escríbenos por Instagram";
+        }
+        btn.hidden = false;
+        if (soon) soon.hidden = true;
+        btn.addEventListener("click", function () { window.track && track(evento); });
       }
+      contacto(document.getElementById("contact-btn"), document.getElementById("contact-soon"), "Sumar mi empresa a Trabaja en Minería", "contacto_empresa");
+      contacto(document.querySelector(".contact-ad"), document.querySelector(".contact-ad-soon"), "Quiero anunciar en Trabaja en Minería", "contacto_anunciante");
       // Cifras en vivo
       fetch(cfg.jobsUrl || "data/jobs.json", { cache: "no-cache" }).then(function (r) { return r.json(); }).then(function (d) {
         var jobs = d.jobs || [];

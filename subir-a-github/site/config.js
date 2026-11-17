@@ -27,4 +27,17 @@ window.TEM_CONFIG = {
   mirrowUrl: "https://www.mirrow.cl",
   // Correo de contacto para empresas (página empresas.html). Vacío = el botón de correo no se muestra.
   contactoEmpresas: "",
+  // Si no hay correo, las empresas escriben por mensaje directo a esta cuenta de Instagram (sin @). Vacío = sin botón.
+  contactoInstagram: "trabajaenmineriacl",
+  // Espacios sin vender muestran un aviso "Anúnciate aquí" que lleva a empresas.html#anunciar. false = no se muestran.
+  anunciateAqui: true,
+  // Patrocinios vendidos directo. Cada uno aparece en los espacios indicados (lateral, listado, pie, cv, guias)
+  // y tiene prioridad sobre AdSense. Fechas en formato AAAA-MM-DD; fuera de esas fechas no se muestra.
+  // Los clics se miden en Analytics como "click_patrocinio" y el enlace lleva UTM (utm_medium=patrocinio).
+  // Ejemplo (copiar, completar y quitar las barras //):
+  // { nombre: "OTEC Ejemplo", categoria: "Capacitación", titulo: "Curso de operador de cargador frontal",
+  //   texto: "Clases en Antofagasta y Calama. Certificación incluida.", cta: "Ver curso",
+  //   url: "https://www.ejemplo.cl/curso", logo: "/media/patrocinio-ejemplo.png",
+  //   espacios: ["lateral", "pie"], desde: "2026-12-01", hasta: "2026-12-31" },
+  patrocinios: [],
 };
