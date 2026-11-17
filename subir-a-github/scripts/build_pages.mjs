@@ -240,7 +240,7 @@ function page({ urlPath, title, description, body, ld = [], bodyClass = "" }) {
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/styles.css?v=20261111">${HEAD_SCRIPTS}
+  <link rel="stylesheet" href="/styles.css?v=20261117">${HEAD_SCRIPTS}
 ${ld.map((o) => `  <script type="application/ld+json">${jsonLd(o)}</script>`).join("\n")}
 </head>
 <body class="seo-page ${bodyClass}">
@@ -278,7 +278,7 @@ ${body}
     <a href="/cv.html"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M7 3h7l5 5v13H7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M14 3v5h5M10 13h6M10 17h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>CV con IA</a>
   </nav>
   <script src="/config.js"></script>
-  <script src="/ads.js?v=20261111"></script>
+  <script src="/ads.js?v=20261117"></script>
   <script src="/consent.js"></script>
   <script>
     document.querySelectorAll("[data-postular]").forEach(function (a) {
