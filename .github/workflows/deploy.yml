@@ -68,6 +68,18 @@ jobs:
         env:
           SITE_URL: ${{ vars.SITE_URL || 'https://trabajaenmineria.cl' }}
         run: node scripts/build_pages.mjs
+      # IndexNow: lista de URLs nuevas o eliminadas (se envía en el job deploy, ya publicado el sitio)
+      - name: Preparar aviso IndexNow
+        if: vars.HOSTING != 'netlify'
+        env:
+          SITE_URL: ${{ vars.SITE_URL || 'https://trabajaenmineria.cl' }}
+        run: node scripts/indexnow.mjs "$RUNNER_TEMP/indexnow.json"
+      - if: vars.HOSTING != 'netlify'
+        uses: actions/upload-artifact@v4
+        with:
+          name: indexnow
+          path: ${{ runner.temp }}/indexnow.json
+          retention-days: 1
       - if: vars.HOSTING != 'netlify'
         uses: actions/configure-pages@v5
       - if: vars.HOSTING != 'netlify'
@@ -85,3 +97,16 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+      # Avisa a Bing, Yahoo, DuckDuckGo y otros buscadores las URLs que cambiaron.
+      # Si IndexNow falla, la publicación no se marca como fallida.
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: indexnow
+      - name: Avisar a IndexNow
+        continue-on-error: true
+        run: |
+          [ -f indexnow.json ] || exit 0
+          sleep 60
+          curl -sS -o /dev/null -w "IndexNow HTTP %{http_code}\n" -X POST "https://api.indexnow.org/indexnow" \
+            -H "Content-Type: application/json; charset=utf-8" --data-binary @indexnow.json
